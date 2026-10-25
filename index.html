@@ -577,28 +577,9 @@ fieldset.field > legend.label{margin-bottom:6px}
         </div>
       </div>
 
-      <!-- 3.3 Client consent -->
-      <div class="card sub" id="sub-consent">
-        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.3</span><h3 class="sub-title" id="h-consent">Client Consent</h3></div>
-        <div class="stack">
-          <fieldset class="field" id="cs-group" aria-labelledby="h-consent">
-            <div class="options one">
-              <label class="check"><input type="checkbox" id="cs-explained" data-bind="assessment.consent.explained"><span>The treatment plan, intended benefits, potential risks and alternatives have been explained.</span></label>
-              <label class="check"><input type="checkbox" id="cs-questions" data-bind="assessment.consent.questions"><span>The client has had an opportunity to ask questions.</span></label>
-              <label class="check"><input type="checkbox" id="cs-informed" data-bind="assessment.consent.informed"><span>The client has given informed consent to proceed.</span></label>
-            </div>
-          </fieldset>
-          <div class="grid g3 labels-2">
-            <div class="field" id="cs-client-sig-field"><span class="label" id="cs-client-sig-label">Client signature</span><div class="sig" id="cs-client-sig" data-bind="assessment.consent.clientSignature" role="group" aria-labelledby="cs-client-sig-label"><canvas aria-label="Client signature pad"></canvas><button type="button" class="btn btn-outline btn-small sig-clear" hidden>Clear</button></div></div>
-            <div class="field" id="cs-rs-sig-field"><span class="label" id="cs-rs-sig-label">Recovery Specialist signature</span><div class="sig" id="cs-rs-sig" data-bind="assessment.consent.rsSignature" role="group" aria-labelledby="cs-rs-sig-label"><canvas aria-label="Recovery Specialist signature pad"></canvas><button type="button" class="btn btn-outline btn-small sig-clear" hidden>Clear</button></div></div>
-            <div class="field"><label class="label" for="cs-date">Date</label><input class="input" type="date" id="cs-date" data-bind="assessment.consent.date"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3.4 Body map -->
+      <!-- 3.3 Body map -->
       <div class="card sub" id="sub-bodymap">
-        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.4</span><h3 class="sub-title">Body Map</h3></div>
+        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.3</span><h3 class="sub-title">Body Map</h3></div>
         <div class="bodymap">
           <figure class="figure" id="bm-front" data-view="front"></figure>
           <figure class="figure" id="bm-back" data-view="back"></figure>
@@ -638,9 +619,9 @@ fieldset.field > legend.label{margin-bottom:6px}
         <div class="actions"><button type="button" class="btn btn-outline btn-small" id="bm-add-row">Add row</button></div>
       </div>
 
-      <!-- 3.5 Session notes -->
+      <!-- 3.4 Session notes -->
       <div class="card sub" id="sub-sessions">
-        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.5</span><h3 class="sub-title">Session Notes</h3><span class="role role-yellow">Mandatory</span></div>
+        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.4</span><h3 class="sub-title">Session Notes</h3><span class="role role-yellow">Mandatory</span></div>
         <div id="sessions"></div>
         <div class="actions"><button type="button" class="btn btn-outline" id="sn-add">Add session</button></div>
       </div>
@@ -1036,7 +1017,6 @@ function emptyState() {
     assessment: {
       redFlags: { calfSwelling: false, chestPain: false, noneSafe: false },
       profile: { occupation: '', sport: '', sessionsPerWeek: '', goals: [], onset: '', duration: '', mainAreas: '', painLevel: '', history: '', findings: '' },
-      consent: { explained: false, questions: false, informed: false, clientSignature: '', rsSignature: '', date: todayISO() },
       bodyMap: { markers: [], manualRows: [0, 1, 2].map(() => ({ area: '', code: '', intensity: '', notes: '' })) },
       sessions: [newSession(1)]
     },
@@ -1548,11 +1528,6 @@ function problems(part) {
     const rf = s.assessment.redFlags;
     if (!rf.calfSwelling && !rf.chestPain && !rf.noneSafe) out.push({ el: $('#rf-group'), msg: 'Please complete the red flag screening.' });
     if (!redFlagPresent()) {
-      const c = s.assessment.consent;
-      if (!(c.explained && c.questions && c.informed)) out.push({ el: $('#cs-group'), msg: 'Please tick all three.' });
-      if (!filled(c.clientSignature)) out.push({ el: $('#cs-client-sig-field'), msg: 'Please sign here.' });
-      if (!filled(c.rsSignature)) out.push({ el: $('#cs-rs-sig-field'), msg: 'Please sign here.' });
-      need('assessment.consent.date', 'cs-date', 'Please choose the date.');
       const i = s.assessment.sessions.length - 1;
       need(`assessment.sessions.${i}.handover.focus`, `sn-${i}-focus`, 'Please add the focus areas for the next session.');
       need(`assessment.sessions.${i}.handover.precautions`, `sn-${i}-precautions`, 'Please add the precautions.');
@@ -2180,10 +2155,9 @@ state = {
     }
   },
   assessment: {
-    redFlags: { calfSwelling, chestPain, noneSafe },            // either red flag blocks 3.2 to 3.5
+    redFlags: { calfSwelling, chestPain, noneSafe },            // either red flag blocks 3.2 to 3.4
     profile: { occupation, sport, sessionsPerWeek, goals: [], onset, duration, mainAreas,
                painLevel: '0'..'10', history, findings },
-    consent: { explained, questions, informed, clientSignature, rsSignature, date },
     bodyMap: {
       markers: [{ id, view: 'front'|'back', x, y,          // x, y = % of the figure box (viewBox -52 150 104 196)
                    code: 'P'|'T'|'X'|'I', intensity: '0'..'10', note, area, areaAuto }],
@@ -2210,8 +2184,8 @@ LAYOUT
 REQUIRED FIELDS (inline messages on Submit; nothing else is blocked)
   Registration: client name, client ID, registration date, date of birth, gender.
   Contraindications: at least one form signed.
-  Assessment: red flag screening answered; if no red flag: 3 consent ticks, both signatures,
-              consent date, handover focus and precautions of the newest session.
+  Assessment: red flag screening answered; if no red flag: handover focus and precautions
+              of the newest session.
   Recovery Plan: plan focus, at least one service, recommended by.
   Rules live in problems(part). The journey bar ticks a step when its rules pass.
 
@@ -2242,12 +2216,6 @@ FIELD IDS AND STATE PATHS
   pr-pain                            assessment.profile.painLevel                     single choice  values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
   pr-history                         assessment.profile.history                       text, multiline
   pr-findings                        assessment.profile.findings                      text, multiline
-  cs-explained                       assessment.consent.explained                     checkbox (true/false)
-  cs-questions                       assessment.consent.questions                     checkbox (true/false)
-  cs-informed                        assessment.consent.informed                      checkbox (true/false)
-  cs-client-sig                      assessment.consent.clientSignature               signature (PNG data URL)
-  cs-rs-sig                          assessment.consent.rsSignature                   signature (PNG data URL)
-  cs-date                            assessment.consent.date                          date (YYYY-MM-DD)
   bm-row-{r}-area                    assessment.bodyMap.manualRows.{r}.area           text
   bm-row-{r}-code                    assessment.bodyMap.manualRows.{r}.code           text
   bm-row-{r}-intensity               assessment.bodyMap.manualRows.{r}.intensity      text

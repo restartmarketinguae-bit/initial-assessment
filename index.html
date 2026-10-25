@@ -1,0 +1,2228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<title>reSTART Initial Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400..900&family=Noto+Sans+Arabic:wght@400;600;700&display=swap">
+<style>
+/* Layout: one white page, sticky client journey bar, brand tabs that straddle the top edge of white cards with a solid yellow offset shadow. iPad portrait first, reflows to phone. */
+:root{
+  --teal:#0C6980;
+  --teal-logo:#2DA4AD;
+  --yellow:#FDC317;
+  --dark:#283334;
+  --black:#000000;
+  --ink:#000000;
+  --white:#FFFFFF;
+  --grey:#686B6C;
+  --field:#F3F6F7;
+  --field-strong:#E8EEF0;
+  --line:#DDE3E4;
+  --red:#C8423B;
+  --red-tint:#FBEAE8;
+  --yellow-tint:#FFF6D6;
+  --teal-tint:#E7F2F4;
+  --figure:#8FA3A5;
+  --foot-text:#C9CDCE;
+  --foot-muted:#9AA0A1;
+  --focus:rgba(12,105,128,.38);
+  --stuck-shadow:rgba(40,51,52,.18);
+
+  /* Brand font: swap this one variable for Museo Sans when the font files are added. */
+  --font:'Nunito Sans','Museo Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-ar:'Noto Sans Arabic','Geeza Pro','Segoe UI',Tahoma,sans-serif;
+
+  --gutter:clamp(16px,4.4vw,44px);
+  --shadow:8px;
+  --radius-card:18px;
+  --journey-h:96px;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+[hidden]{display:none!important}
+body{margin:0;background:var(--white);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--white)}
+html.sheet-open,html.sheet-open body{overflow:hidden}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(var(--gutter),env(safe-area-inset-left,0px));padding-right:max(var(--gutter),env(safe-area-inset-right,0px))}
+
+/* ---------- Header ---------- */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}
+.top-text{padding-block:38px 6px;min-width:0}
+.eyebrow{margin:0 0 10px;font-size:12.5px;font-weight:800;letter-spacing:.34em;color:var(--teal);text-transform:uppercase}
+.title-pill{display:inline-block;margin:0;background:var(--black);color:var(--yellow);font-weight:900;font-size:clamp(16px,3.7vw,31px);line-height:1.15;letter-spacing:.07em;padding:.42em .95em .44em;border-radius:14px;text-transform:uppercase}
+.logo-tab{width:clamp(80px,14.5vw,128px);background:var(--dark);border-radius:0 0 16px 16px;padding:clamp(12px,2vw,18px) clamp(10px,1.8vw,16px) clamp(10px,1.6vw,14px)}
+.logo-tab img{display:block;width:100%;height:auto}
+
+/* ---------- Client journey ---------- */
+.journey-sentinel{height:1px}
+.journey{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--white);padding-block:12px 12px;transition:box-shadow .2s}
+.journey.stuck{box-shadow:0 10px 18px -16px var(--stuck-shadow),0 1px 0 var(--line)}
+.micro{margin:0 0 9px;font-size:10.5px;font-weight:800;letter-spacing:.22em;color:var(--grey);text-transform:uppercase}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.step{width:100%;min-height:62px;display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-radius:12px;background:var(--field);text-align:left;position:relative;transition:box-shadow .15s}
+.step:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.step[aria-current="step"]{box-shadow:inset 0 0 0 2px var(--teal)}
+.step-num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--yellow);color:var(--ink);display:grid;place-items:center;font-weight:900;font-size:15px}
+.step-text{display:flex;flex-direction:column;min-width:0;gap:1px}
+.step-title{font-weight:800;font-size:14.5px;color:var(--teal);line-height:1.15;white-space:nowrap}
+.step-sub{font-size:11.5px;color:var(--grey);line-height:1.2;padding-right:20px}
+.step-tick{position:absolute;right:10px;bottom:10px;width:17px;height:17px;border:2px solid var(--teal);border-radius:3px;background:var(--white)}
+.step.done .step-tick{background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4l3 3 6.6-6.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+
+/* ---------- Parts and cards ---------- */
+main{padding-bottom:8px}
+.part{margin-top:56px;scroll-margin-top:calc(var(--journey-h) + 22px)}
+.part:first-child{margin-top:40px}
+.card{position:relative;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-card);box-shadow:var(--shadow) var(--shadow) 0 var(--yellow);margin-right:var(--shadow)}
+.part-card{padding:44px 24px 26px}
+.part-head{position:absolute;left:-12px;right:18px;top:-19px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 12px;pointer-events:none}
+.part-head > *{pointer-events:auto}
+.part-head.static{position:static;margin-right:var(--shadow);margin-left:-12px;padding-left:0}
+.tab{display:flex;align-items:center;margin:0;font-size:inherit;min-width:0}
+.tab-cap{flex:none;width:30px;height:36px;border-radius:50%;background:var(--yellow);margin-right:-15px}
+.tab-pill{position:relative;display:flex;align-items:center;height:38px;padding:0 30px 0 22px;border-radius:999px;background:var(--teal);color:var(--white);font-weight:800;font-size:15.5px;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap}
+.tab-no{margin-right:1.05em}
+.role{display:inline-flex;align-items:center;min-height:26px;padding:3px 13px;border-radius:999px;border:3px solid var(--white);font-size:10.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.role-teal{background:var(--teal);color:var(--white)}
+.role-yellow{background:var(--yellow);color:var(--ink)}
+.role-red{background:var(--red);color:var(--white)}
+.part-head.static .role{border-color:transparent}
+
+.sub{padding:20px 24px 24px;margin-top:30px}
+.part-head.static + .sub{margin-top:22px}
+.sub-head{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sub-dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--yellow)}
+.sub-no{color:var(--teal);font-weight:900;font-size:17px;letter-spacing:.04em}
+.sub-title{margin:0;font-weight:900;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.sub-head .role{margin-left:auto;border-color:transparent}
+
+/* ---------- Fields ---------- */
+.grid{display:grid;gap:18px 22px;align-items:end}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-reg1{grid-template-columns:2fr 1fr 1fr}
+.g-onset{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);align-items:end}
+.span-all{grid-column:1/-1}
+.stack{display:grid;gap:20px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0;margin:0;padding:0;border:0}
+.label{display:block;padding:0;margin:0;font-size:11px;font-weight:800;letter-spacing:.16em;line-height:1.3;color:var(--grey);text-transform:uppercase}
+.input{display:block;width:100%;height:46px;margin:0;padding:0 12px;border:0;border-bottom:2px solid var(--teal);border-radius:8px 8px 0 0;background:var(--field);color:var(--ink);font:400 16px/1.25 var(--font);-webkit-appearance:none;appearance:none}
+.input::placeholder{color:var(--grey);opacity:.7}
+.input:focus{outline:none;background:var(--field-strong)}
+.input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+input[type="date"].input{text-align:left;line-height:46px}
+input[type="date"].input::-webkit-date-and-time-value{text-align:left}
+input[type="date"].input::-webkit-calendar-picker-indicator{opacity:.55}
+textarea.input{height:auto;min-height:124px;padding:12px 13px;border:1px solid var(--line);border-radius:10px;resize:vertical;line-height:1.45}
+textarea.input.short{min-height:96px}
+.field.invalid .input,.field.invalid .sig{border-bottom-color:var(--red)}
+.field.invalid textarea.input{border-color:var(--red)}
+.msg{margin:2px 0 0;font-size:13px;font-weight:700;color:var(--red)}
+
+/* Checkboxes and single select options share the square look from the approved design. */
+.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:22px;row-gap:0}
+.options.inline{display:flex;flex-wrap:wrap;column-gap:30px}
+.options.one{grid-template-columns:minmax(0,1fr)}
+.check{display:flex;align-items:center;gap:11px;min-height:44px;padding:2px 0;font-size:15.5px;line-height:1.3;cursor:pointer;min-width:0}
+.check input{flex:none;width:22px;height:22px;margin:0;border:2px solid var(--teal);border-radius:4px;background:var(--white);-webkit-appearance:none;appearance:none;cursor:pointer;display:inline-grid;place-items:center;transition:background-color .12s}
+.check input:checked{background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4l3 3 6.6-6.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat}
+.check input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.check input:disabled{opacity:.45}
+.check.strong span{color:var(--teal);font-weight:800}
+.field.invalid .check input{border-color:var(--red)}
+
+.row-label{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.row-label > .label{margin-right:4px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 24px;border:0;border-radius:999px;font-weight:900;font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;transition:filter .12s,background-color .12s}
+.btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.btn-teal{background:var(--teal);color:var(--white)}
+.btn-teal:active{filter:brightness(.9)}
+.btn-outline{background:var(--white);color:var(--teal);box-shadow:inset 0 0 0 2px var(--teal)}
+.btn-small{min-height:44px;padding:0 18px;font-size:11.5px}
+.actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px;margin-top:24px}
+.actions.split{justify-content:space-between}
+
+/* ---------- Red flag ---------- */
+.alert{margin-top:14px;padding:14px 18px 15px 23px;border-radius:10px;background:var(--red-tint);box-shadow:inset 5px 0 0 var(--red);transition:background-color .2s,color .2s}
+.alert-title{display:block;margin:0 0 5px;color:var(--red);font-weight:900;font-size:15.5px}
+.alert-text{margin:0;font-size:14px;line-height:1.45;max-width:64ch}
+.alert.active{background:var(--red);color:var(--white);box-shadow:inset 5px 0 0 var(--dark)}
+.alert.active .alert-title{color:var(--white);font-size:17px}
+.blockable{transition:opacity .2s}
+.blockable.blocked{opacity:.32;filter:grayscale(.6)}
+
+/* ---------- Pain scale ---------- */
+.pain{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px}
+.pain-tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:64px;border-radius:10px;color:var(--white);font-weight:900;font-size:18px;cursor:pointer;background:var(--tile)}
+.pain-tile input{width:17px;height:17px;margin:0;border:2px solid var(--white);border-radius:3px;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.pain-tile input:checked{background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4l3 3 6.6-6.8' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.pain-tile:has(input:checked){box-shadow:0 0 0 3px var(--white),0 0 0 5px var(--ink)}
+.pain-tile:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:4px}
+
+/* ---------- Contraindication tiles ---------- */
+.ci-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ci-tile{display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:118px;padding:16px 14px 14px 21px;border-radius:10px;background:var(--field);box-shadow:inset 5px 0 0 var(--yellow);min-width:0}
+.ci-tile.flagged{box-shadow:inset 5px 0 0 var(--red)}
+.ci-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.ci-name{margin:0;font-size:16px;font-weight:800;color:var(--teal);line-height:1.2}
+.flag{flex:none;display:inline-flex;align-items:center;min-height:24px;padding:2px 10px;border-radius:999px;background:var(--red);color:var(--white);font-size:10.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.ci-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px}
+.status{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;min-height:44px}
+.status-box{flex:none;width:20px;height:20px;border:2px solid var(--teal);border-radius:3px;background:var(--white)}
+.status.signed .status-box{background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4l3 3 6.6-6.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat}
+.status-date{color:var(--grey);font-size:12.5px;font-weight:700}
+
+/* ---------- Body map ---------- */
+.bodymap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(170px,.8fr);gap:12px 18px;padding:20px 20px 18px;border-radius:12px;background:var(--field);align-items:start}
+.figure{margin:0;min-width:0}
+.figure svg{display:block;width:100%;height:auto;max-height:440px;margin:0 auto}
+.codes .label{color:var(--ink);font-size:12px;letter-spacing:.2em;margin-bottom:12px}
+.code-list{display:grid;gap:6px}
+.code-dot{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px;color:var(--white)}
+.code-P{background:var(--red)}
+.code-T{background:var(--teal)}
+.code-X{background:var(--yellow);color:var(--ink)}
+.code-I{background:var(--dark)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px}
+.findings{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;font-size:15px}
+.findings th{background:var(--teal);color:var(--white);font-size:11px;font-weight:800;letter-spacing:.15em;text-align:left;padding:10px 12px;text-transform:uppercase;white-space:nowrap}
+.findings th:first-child{border-radius:8px 0 0 8px}
+.findings th:last-child{border-radius:0 8px 8px 0}
+.findings td{padding:0;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.findings td:last-child{border-right:0}
+.findings tbody tr:nth-child(even) td{background:var(--field)}
+.findings input{display:block;width:100%;height:44px;padding:0 12px;border:0;background:transparent;font:400 16px var(--font);color:var(--ink)}
+.findings input:focus{outline:2px solid var(--focus);outline-offset:-2px}
+.col-area{width:34%}.col-code{width:12%}.col-int{width:18%}
+
+/* ---------- Session notes ---------- */
+.handover{margin-top:22px;padding:18px 20px 20px 26px;border-radius:12px;background:var(--yellow-tint);box-shadow:inset 5px 0 0 var(--yellow)}
+.panel-title{margin:0 0 14px;font-size:15px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.handover textarea.input{background:var(--white)}
+
+/* ---------- Recovery plan ---------- */
+.svc-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 34px}
+.svc-head,.svc-row{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px;align-items:center}
+.svc-head .label{letter-spacing:.12em;white-space:nowrap}
+.svc-head{margin-bottom:4px}
+.svc-row .input{height:44px}
+.reco{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:10px 22px;align-items:end;padding:16px 20px 18px;border-radius:12px;background:var(--teal-tint)}
+@media (max-width:940px){.reco{grid-template-columns:minmax(0,1fr)}}
+.reco .panel-title{color:var(--teal);font-size:14px;margin-bottom:6px}
+.after{padding:18px 22px 14px;border-radius:14px;background:var(--black);color:var(--white)}
+.after .panel-title{color:var(--yellow);font-size:14px;margin-bottom:6px}
+.after .check input{border-color:var(--teal);background-color:var(--white)}
+.after .check input:checked{background-color:var(--teal)}
+
+/* ---------- Signature pad ---------- */
+.sig{position:relative;height:150px;border-radius:10px 10px 0 0;border-bottom:2px solid var(--teal);background:var(--field);touch-action:none;overflow:hidden}
+.sig.tall{height:190px}
+.sig canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+.sig-clear{position:absolute;top:6px;right:6px;z-index:1}
+[dir="rtl"] .sig-clear{right:auto;left:6px}
+.sig-clear[hidden]{display:none}
+
+/* ---------- Footer ---------- */
+.foot{margin-top:72px;background:var(--black);color:var(--white)}
+.foot-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:14px 28px;padding-block:22px calc(22px + env(safe-area-inset-bottom,0px))}
+.foot-co{margin:0 0 4px;font-size:13px;font-weight:700}
+.foot-addr{margin:0;font-size:12.5px;color:var(--foot-text)}
+.foot-right{text-align:right}
+.foot-handle{margin:0 0 4px;font-size:18px;font-weight:800}
+.foot-note{margin:0;font-size:11px;color:var(--foot-muted)}
+
+/* ---------- Contraindication sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:50;background:var(--white);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;animation:sheet-in .22s ease-out}
+@keyframes sheet-in{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
+.sheet-bar{position:sticky;top:0;z-index:2;background:var(--white);border-bottom:1px solid var(--line);padding-top:max(12px,env(safe-area-inset-top,0px));padding-bottom:12px}
+.sheet-bar-in{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sheet-title{flex:1 1 220px;margin:0;text-align:right;font-size:13.5px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;line-height:1.35}
+.seg{display:inline-flex;flex:none;border:2px solid var(--teal);border-radius:999px;overflow:hidden}
+.seg button{min-width:58px;min-height:40px;padding:0 14px;border:0;background:var(--white);color:var(--teal);font-weight:900;font-size:13px;letter-spacing:.08em}
+.seg button[aria-pressed="true"]{background:var(--teal);color:var(--white)}
+.seg button:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+.seg .ar{font-family:var(--font-ar);letter-spacing:0;font-size:15px}
+.doc{max-width:900px;margin:26px auto 30px;padding:30px 30px 26px;border:1px solid var(--line);border-radius:16px;background:var(--white)}
+.doc-mark{display:block;width:56px;height:56px;margin:0 auto 22px;border-radius:12px}
+.doc p{margin:0 0 12px;font-size:15.5px;line-height:1.6;max-width:72ch}
+.doc .greet{font-weight:800}
+.ci-head{margin:26px 0 8px;font-size:14px;font-weight:900;letter-spacing:.14em;color:var(--teal);text-transform:uppercase}
+.ci-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px;margin:0;padding:0;border:0}
+.ci-list .check{font-size:15.5px;align-items:flex-start;padding-block:10px}
+.ci-list .check input{margin-top:0}
+.med{margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+.med-q{display:flex;flex-wrap:wrap;align-items:center;gap:6px 28px}
+.med-q .q{font-weight:800;font-size:15.5px;margin-right:6px}
+.decl{margin-top:20px;padding:16px 18px;border-radius:10px;background:var(--field);font-size:15.5px;line-height:1.6}
+.decl b{font-weight:900}
+.sign-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px 22px;margin-top:22px}
+.doc[dir="rtl"],.doc[dir="rtl"] .input{font-family:var(--font-ar)}
+.doc[dir="rtl"] .ci-head,.doc[dir="rtl"] .label{letter-spacing:0;font-size:15px;text-transform:none}
+.doc[dir="rtl"] p,.doc[dir="rtl"] .check,.doc[dir="rtl"] .decl{font-size:16.5px;line-height:1.75}
+.doc[dir="rtl"] .med-q .q{font-size:16.5px}
+.doc[dir="rtl"] input[type="date"].input{text-align:right}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:80;transform:translate(-50%,16px);opacity:0;pointer-events:none;max-width:calc(100% - 32px);padding:12px 22px;border-radius:999px;background:var(--dark);color:var(--white);font-weight:800;font-size:14.5px;box-shadow:0 10px 24px -12px var(--stuck-shadow);transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- Small tablets and phones ---------- */
+@media (max-width:940px){
+  .steps{gap:9px}
+  .step{padding:9px 10px;gap:9px}
+  .step-num{width:28px;height:28px;font-size:14px}
+  .step-title{font-size:12.5px}
+  .step-sub{font-size:11px}
+  .step-tick{right:8px;bottom:8px;width:16px;height:16px}
+  .options.inline{column-gap:20px}
+  .options.inline .check{gap:9px;font-size:15px}
+}
+@media (max-width:760px){
+  .ci-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .options{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bodymap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .codes{grid-column:1/-1}
+  .code-list{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .svc-cols{grid-template-columns:minmax(0,1fr)}
+  .ci-list{grid-template-columns:minmax(0,1fr)}
+  .step-sub{display:none}
+  .step{min-height:54px}
+}
+@media (max-width:600px){
+  :root{--shadow:6px;--radius-card:16px}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .step{min-height:46px;padding:7px 10px;gap:9px}
+  .step-num{width:26px;height:26px;font-size:13.5px}
+  .step-title{font-size:13px}
+  .step-tick{display:none}
+  .step.done .step-num{background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4l3 3 6.6-6.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;color:transparent}
+  .micro{margin-bottom:7px}
+  .g3,.g2,.g-reg1,.g-onset,.reco,.sign-row{grid-template-columns:minmax(0,1fr)}
+  .part-card{padding:72px 16px 20px}
+  .sub{padding:18px 16px 20px}
+  .tab-pill{height:36px;padding:0 20px 0 20px;font-size:13px;letter-spacing:.17em}
+  .tab-cap{width:26px;height:32px;margin-right:-14px}
+  .part-head{left:-9px;right:12px;top:-18px}
+  .part-head:not(.static) .role{margin-left:auto}
+  .role{font-size:9.5px;letter-spacing:.1em;padding:2px 10px}
+  .sub-no,.sub-title{font-size:15px}
+  .sub-title{letter-spacing:.12em}
+  .ci-grid{grid-template-columns:minmax(0,1fr)}
+  .pain{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .options{grid-template-columns:minmax(0,1fr)}
+  .options.inline{column-gap:22px}
+  .code-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bodymap{padding:14px 12px}
+  .handover{padding:16px 14px 16px 20px}
+  .doc{padding:22px 16px 20px;margin-top:16px;border-radius:12px}
+  .sheet-title{flex-basis:100%;order:3;text-align:left;font-size:12px}
+  .foot-right{text-align:left}
+}
+
+/* ---------- Additions ---------- */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+fieldset.field{display:block}
+fieldset.field > legend.label{margin-bottom:6px}
+.g2-after{grid-template-columns:repeat(2,minmax(0,1fr))}
+.end-actions{justify-content:center;margin-top:44px}
+.session + .session{margin-top:26px;padding-top:22px;border-top:1px dashed var(--line)}
+.pressure > legend{float:left;margin:13px 22px 0 0}
+.pressure > .options{display:flex}
+.med-q > legend{float:left;margin:12px 26px 0 0;padding:0;font-weight:800;font-size:15.5px}
+.doc[dir="rtl"] .med-q > legend{float:right;margin:12px 0 0 26px;font-size:16.5px}
+.doc[dir="rtl"] .pressure > legend{float:right}
+.ci-group + .ci-group{margin-top:6px}
+@media (max-width:600px){
+  .g2-after{grid-template-columns:minmax(0,1fr)}
+  .pressure > legend,.med-q > legend{float:none;margin:0 0 4px}
+  .doc[dir="rtl"] .med-q > legend{float:none;margin:0 0 4px}
+}
+.fig-cap{margin-top:8px;text-align:center;font-weight:900;font-size:13px;letter-spacing:.22em;color:var(--teal);text-transform:uppercase}
+.doc .ci-group{margin:0;padding:0;border:0;min-width:0}
+
+/* Rows that mix signature pads and short fields: labels end on one line so pads and inputs start level. */
+.labels-2{align-items:start}
+.labels-2 > .field > .label{min-height:2.7em;display:flex;align-items:flex-end}
+@media (max-width:940px){
+  .sheet-title{font-size:12.5px;letter-spacing:.13em}
+}
+@media (max-width:600px){
+  .part-head.static{margin-left:-9px}
+  .labels-2 > .field > .label{min-height:0}
+  .sheet-bar{position:relative}
+  .sheet-bar-in{gap:10px}
+  .sheet-bar .btn{min-height:44px;padding:0 16px;font-size:11px;letter-spacing:.1em}
+  .seg button{min-width:50px}
+  .title-pill{letter-spacing:.05em;padding:.42em .8em .44em}
+}
+
+/* ---------- Body map interaction ---------- */
+.code-btn{display:flex;align-items:center;gap:11px;width:100%;min-height:46px;padding:4px 14px 4px 7px;border:2px solid transparent;border-radius:999px;background:transparent;color:var(--ink);font-size:15.5px;font-weight:600;text-align:left}
+.code-btn[aria-checked="true"]{border-color:var(--teal);background:var(--white)}
+.code-btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.figure svg{cursor:crosshair;-webkit-user-select:none;user-select:none}
+.marker{cursor:grab;outline:none}
+.marker:focus-visible .mk-ring{stroke:var(--teal);stroke-width:1.6}
+.mk-editor{margin-top:14px;padding:16px 18px 18px;border-radius:12px;border:2px solid var(--teal);background:var(--white)}
+.mk-top{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);align-items:start}
+.mk-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mk-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:4px 14px 4px 6px;border:2px solid var(--line);border-radius:999px;font-size:14.5px;font-weight:600;cursor:pointer}
+.mk-chip input{position:absolute;opacity:0;pointer-events:none}
+.mk-chip:has(input:checked){border-color:var(--teal);background:var(--teal-tint)}
+.mk-chip:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:2px}
+.mk-int{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px}
+.mk-int label{display:grid;place-items:center;min-height:44px;border:2px solid var(--line);border-radius:8px;font-weight:800;font-size:15px;cursor:pointer}
+.mk-int input{position:absolute;opacity:0;pointer-events:none}
+.mk-int label:has(input:checked){background:var(--teal);border-color:var(--teal);color:var(--white)}
+.mk-int label:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:2px}
+.mk-editor .stack,.mk-editor > .field{margin-top:14px}
+.btn-danger{color:var(--red);box-shadow:inset 0 0 0 2px var(--red)}
+.findings .code-cell{text-align:center;vertical-align:middle;padding:4px}
+.findings .code-cell .code-dot{margin:0 auto;border:0;cursor:pointer;width:30px;height:30px}
+.findings tr.sel td{background:var(--teal-tint)!important}
+/* ---------- Sessions ---------- */
+.session{border-top:0}
+.session + .session{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.session-sum{display:grid;grid-template-columns:auto auto auto minmax(0,1fr) auto;align-items:center;gap:6px 16px;width:100%;min-height:48px;padding:8px 14px;border:0;border-radius:10px;background:var(--field);text-align:left;font-size:14.5px;color:var(--ink)}
+.session-sum:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.session-sum[aria-expanded="true"]{background:var(--teal-tint);margin-bottom:16px}
+.sum-no{font-weight:900;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+.sum-date,.sum-rs{font-weight:700;white-space:nowrap}
+.sum-focus{color:var(--grey);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.sum-chev{width:10px;height:10px;border-right:2.5px solid var(--teal);border-bottom:2.5px solid var(--teal);transform:rotate(45deg);margin:0 4px 4px}
+.session-sum[aria-expanded="true"] .sum-chev{transform:rotate(225deg);margin:4px 4px 0}
+@media (max-width:760px){.code-list{grid-template-columns:repeat(2,minmax(0,1fr))}.mk-top{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){
+  .mk-int{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .session-sum{grid-template-columns:auto minmax(0,1fr) auto}
+  .sum-rs,.sum-focus{grid-column:2/3}
+  .mk-editor{padding:14px 12px 16px}
+}
+
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <div class="top-text">
+    <h1 class="title-pill">Initial Assessment</h1>
+  </div>
+  <div class="logo-tab"><img src="data:image/png;base64,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" alt="reSTART Wellness" width="255" height="425"></div>
+</header>
+
+<div class="journey-sentinel" id="journey-sentinel" aria-hidden="true"></div>
+<nav class="journey" id="journey" aria-label="Client journey">
+  <div class="wrap">
+    <p class="micro" aria-hidden="true">Client journey</p>
+    <ol class="steps">
+      <li><button type="button" class="step" id="step-registration" data-part="registration" aria-describedby="step-registration-state"><span class="step-num" aria-hidden="true">1</span><span class="step-text"><span class="step-title">Registration</span><span class="step-sub">RS and Reception</span></span><span class="step-tick" aria-hidden="true"></span><span class="sr-only" id="step-registration-state">not complete</span></button></li>
+      <li><button type="button" class="step" id="step-contraindications" data-part="contraindications" aria-describedby="step-contraindications-state"><span class="step-num" aria-hidden="true">2</span><span class="step-text"><span class="step-title">Contraindications</span><span class="step-sub">Client and Reception</span></span><span class="step-tick" aria-hidden="true"></span><span class="sr-only" id="step-contraindications-state">not complete</span></button></li>
+      <li><button type="button" class="step" id="step-assessment" data-part="assessment" aria-describedby="step-assessment-state"><span class="step-num" aria-hidden="true">3</span><span class="step-text"><span class="step-title">Assessment</span><span class="step-sub">Recovery Specialist</span></span><span class="step-tick" aria-hidden="true"></span><span class="sr-only" id="step-assessment-state">not complete</span></button></li>
+      <li><button type="button" class="step" id="step-recoveryPlan" data-part="recoveryPlan" aria-describedby="step-recoveryPlan-state"><span class="step-num" aria-hidden="true">4</span><span class="step-text"><span class="step-title">Recovery Plan</span><span class="step-sub">RS and Reception</span></span><span class="step-tick" aria-hidden="true"></span><span class="sr-only" id="step-recoveryPlan-state">not complete</span></button></li>
+    </ol>
+  </div>
+</nav>
+
+<main class="wrap" id="app">
+
+  <!-- ===================== 01 REGISTRATION ===================== -->
+  <section class="part" id="part-registration" aria-labelledby="h-registration">
+    <div class="card part-card">
+      <div class="part-head">
+        <h2 class="tab" id="h-registration" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">01</span>Registration</span></h2>
+        <span class="role role-teal">RS and Reception</span>
+      </div>
+      <div class="stack">
+        <div class="grid g-reg1">
+          <div class="field"><label class="label" for="reg-client-name">Client name</label><input class="input" id="reg-client-name" data-bind="registration.clientName" autocomplete="off" autocapitalize="words" spellcheck="false"></div>
+          <div class="field"><label class="label" for="reg-client-id">Client ID / file no.</label><input class="input" id="reg-client-id" data-bind="registration.clientId" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+          <div class="field"><label class="label" for="reg-date">Registration date</label><input class="input" type="date" id="reg-date" data-bind="registration.registrationDate"></div>
+        </div>
+        <div class="grid g3">
+          <div class="field"><label class="label" for="reg-dob">Date of birth</label><input class="input" type="date" id="reg-dob" data-bind="registration.dateOfBirth"></div>
+          <fieldset class="field" id="reg-gender" data-bind="registration.gender" data-kind="single">
+            <legend class="label">Gender</legend>
+            <div class="options inline">
+              <label class="check"><input type="radio" name="reg-gender" id="reg-gender-male" value="male"><span>Male</span></label>
+              <label class="check"><input type="radio" name="reg-gender" id="reg-gender-female" value="female"><span>Female</span></label>
+            </div>
+          </fieldset>
+          <div class="field"><label class="label" for="reg-preferred-rs">Preferred Recovery Specialist</label><input class="input" id="reg-preferred-rs" data-bind="registration.preferredRS" list="rs-names" autocomplete="off" autocapitalize="words"></div>
+        </div>
+      </div>
+      <div class="actions"><button type="button" class="btn btn-teal" id="submit-registration" data-submit="registration">Submit</button></div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 CONTRAINDICATIONS ===================== -->
+  <section class="part" id="part-contraindications" aria-labelledby="h-contraindications">
+    <div class="card part-card">
+      <div class="part-head">
+        <h2 class="tab" id="h-contraindications" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">02</span>Contraindications</span></h2>
+        <span class="role role-yellow">Client and Reception</span>
+      </div>
+      <div class="stack">
+        <div class="field" id="ci-tiles-field">
+          <div class="ci-grid" id="ci-grid"></div>
+        </div>
+        <div class="field"><label class="label" for="ci-additional">Additional precautions</label><input class="input" id="ci-additional" data-bind="contraindications.additionalPrecautions" autocomplete="off"></div>
+      </div>
+      <div class="actions"><button type="button" class="btn btn-teal" id="submit-contraindications" data-submit="contraindications">Submit</button></div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 ASSESSMENT ===================== -->
+  <section class="part" id="part-assessment" aria-labelledby="h-assessment">
+    <div class="part-head static">
+      <h2 class="tab" id="h-assessment" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">03</span>Assessment</span></h2>
+      <span class="role role-teal">Recovery Specialist</span>
+    </div>
+
+    <!-- 3.1 Red flag screening -->
+    <div class="card sub" id="sub-redflags">
+      <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.1</span><h3 class="sub-title" id="h-redflags">Red Flag Screening</h3><span class="role role-red">Stop check</span></div>
+      <fieldset class="field" id="rf-group" aria-labelledby="h-redflags">
+        <div class="options one">
+          <label class="check"><input type="checkbox" id="rf-calf" data-bind="assessment.redFlags.calfSwelling"><span>Sudden one sided calf swelling, warmth or pain</span></label>
+          <label class="check"><input type="checkbox" id="rf-chest" data-bind="assessment.redFlags.chestPain"><span>New or unexplained chest pain or shortness of breath</span></label>
+          <label class="check strong"><input type="checkbox" id="rf-none" data-bind="assessment.redFlags.noneSafe"><span>No red flags present, safe to proceed</span></label>
+        </div>
+      </fieldset>
+      <div class="alert" id="rf-alert" aria-live="assertive">
+        <p class="alert-title">If any red flag is present, do not proceed with massage.</p>
+        <p class="alert-text">Sudden one sided calf swelling or pain may indicate a blood clot. Chest pain or shortness of breath may indicate a medical emergency. Refer for urgent medical assessment and call local emergency services (998) for potentially life threatening symptoms.</p>
+      </div>
+    </div>
+
+    <div class="blockable" id="assessment-rest">
+
+      <!-- 3.2 Client profile and goals -->
+      <div class="card sub" id="sub-profile">
+        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.2</span><h3 class="sub-title">Client Profile &amp; Goals</h3></div>
+        <div class="stack">
+          <div class="grid g3">
+            <div class="field"><label class="label" for="pr-occupation">Occupation</label><input class="input" id="pr-occupation" data-bind="assessment.profile.occupation" autocomplete="off"></div>
+            <div class="field"><label class="label" for="pr-sport">Sport / training</label><input class="input" id="pr-sport" data-bind="assessment.profile.sport" autocomplete="off"></div>
+            <div class="field"><label class="label" for="pr-sessions-week">Training sessions per week</label><input class="input" id="pr-sessions-week" data-bind="assessment.profile.sessionsPerWeek" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <fieldset class="field" id="pr-goals" data-bind="assessment.profile.goals" data-kind="multi">
+            <legend class="label">Primary goal</legend>
+            <div class="options">
+              <label class="check"><input type="checkbox" id="pr-goal-muscleRecovery" value="muscleRecovery"><span>Muscle recovery</span></label>
+              <label class="check"><input type="checkbox" id="pr-goal-painRelief" value="painRelief"><span>Pain relief</span></label>
+              <label class="check"><input type="checkbox" id="pr-goal-mobilityFlexibility" value="mobilityFlexibility"><span>Mobility &amp; flexibility</span></label>
+              <label class="check"><input type="checkbox" id="pr-goal-injuryPrevention" value="injuryPrevention"><span>Injury prevention</span></label>
+              <label class="check"><input type="checkbox" id="pr-goal-performanceEventPrep" value="performanceEventPrep"><span>Performance / event prep</span></label>
+              <label class="check"><input type="checkbox" id="pr-goal-relaxationStress" value="relaxationStress"><span>Relaxation &amp; stress</span></label>
+            </div>
+          </fieldset>
+          <div class="grid g-onset">
+            <fieldset class="field" id="pr-onset" data-bind="assessment.profile.onset" data-kind="single">
+              <legend class="label">Symptom onset</legend>
+              <div class="options inline">
+                <label class="check"><input type="radio" name="pr-onset" id="pr-onset-sudden" value="sudden"><span>Sudden</span></label>
+                <label class="check"><input type="radio" name="pr-onset" id="pr-onset-gradual" value="gradual"><span>Gradual</span></label>
+                <label class="check"><input type="radio" name="pr-onset" id="pr-onset-afterInjury" value="afterInjury"><span>After injury</span></label>
+                <label class="check"><input type="radio" name="pr-onset" id="pr-onset-afterEvent" value="afterEvent"><span>After event</span></label>
+              </div>
+            </fieldset>
+            <div class="field"><label class="label" for="pr-duration">Duration</label><input class="input" id="pr-duration" data-bind="assessment.profile.duration" autocomplete="off"></div>
+          </div>
+          <div class="field"><label class="label" for="pr-main-areas">Main area(s) of concern</label><input class="input" id="pr-main-areas" data-bind="assessment.profile.mainAreas" autocomplete="off"></div>
+          <fieldset class="field" id="pr-pain" data-bind="assessment.profile.painLevel" data-kind="single">
+            <legend class="label">Current pain level (0 = no pain, 10 = worst imaginable)</legend>
+            <div class="pain" id="pr-pain-tiles"></div>
+          </fieldset>
+          <div class="field"><label class="label" for="pr-history">Symptoms / relevant history</label><textarea class="input" id="pr-history" data-bind="assessment.profile.history" rows="4"></textarea></div>
+          <div class="field"><label class="label" for="pr-findings">Assessment findings</label><textarea class="input" id="pr-findings" data-bind="assessment.profile.findings" rows="4"></textarea></div>
+        </div>
+      </div>
+
+      <!-- 3.3 Client consent -->
+      <div class="card sub" id="sub-consent">
+        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.3</span><h3 class="sub-title" id="h-consent">Client Consent</h3></div>
+        <div class="stack">
+          <fieldset class="field" id="cs-group" aria-labelledby="h-consent">
+            <div class="options one">
+              <label class="check"><input type="checkbox" id="cs-explained" data-bind="assessment.consent.explained"><span>The treatment plan, intended benefits, potential risks and alternatives have been explained.</span></label>
+              <label class="check"><input type="checkbox" id="cs-questions" data-bind="assessment.consent.questions"><span>The client has had an opportunity to ask questions.</span></label>
+              <label class="check"><input type="checkbox" id="cs-informed" data-bind="assessment.consent.informed"><span>The client has given informed consent to proceed.</span></label>
+            </div>
+          </fieldset>
+          <div class="grid g3 labels-2">
+            <div class="field" id="cs-client-sig-field"><span class="label" id="cs-client-sig-label">Client signature</span><div class="sig" id="cs-client-sig" data-bind="assessment.consent.clientSignature" role="group" aria-labelledby="cs-client-sig-label"><canvas aria-label="Client signature pad"></canvas><button type="button" class="btn btn-outline btn-small sig-clear" hidden>Clear</button></div></div>
+            <div class="field" id="cs-rs-sig-field"><span class="label" id="cs-rs-sig-label">Recovery Specialist signature</span><div class="sig" id="cs-rs-sig" data-bind="assessment.consent.rsSignature" role="group" aria-labelledby="cs-rs-sig-label"><canvas aria-label="Recovery Specialist signature pad"></canvas><button type="button" class="btn btn-outline btn-small sig-clear" hidden>Clear</button></div></div>
+            <div class="field"><label class="label" for="cs-date">Date</label><input class="input" type="date" id="cs-date" data-bind="assessment.consent.date"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.4 Body map -->
+      <div class="card sub" id="sub-bodymap">
+        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.4</span><h3 class="sub-title">Body Map</h3></div>
+        <div class="bodymap">
+          <figure class="figure" id="bm-front" data-view="front"></figure>
+          <figure class="figure" id="bm-back" data-view="back"></figure>
+          <div class="codes">
+            <p class="label" id="bm-codes-label">Marking codes</p>
+            <div class="code-list" id="bm-codes" role="radiogroup" aria-labelledby="bm-codes-label">
+              <button type="button" class="code-btn" id="bm-code-P" data-code="P" role="radio" aria-checked="true"><span class="code-dot code-P" aria-hidden="true">P</span>Pain</button>
+              <button type="button" class="code-btn" id="bm-code-T" data-code="T" role="radio" aria-checked="false"><span class="code-dot code-T" aria-hidden="true">T</span>Tightness</button>
+              <button type="button" class="code-btn" id="bm-code-X" data-code="X" role="radio" aria-checked="false"><span class="code-dot code-X" aria-hidden="true">X</span>Trigger point</button>
+              <button type="button" class="code-btn" id="bm-code-I" data-code="I" role="radio" aria-checked="false"><span class="code-dot code-I" aria-hidden="true">I</span>Injury</button>
+            </div>
+          </div>
+        </div>
+        <div class="mk-editor" id="bm-editor" hidden>
+          <div class="grid mk-top">
+            <div class="field"><label class="label" for="bm-ed-area">Area</label><input class="input" id="bm-ed-area" autocomplete="off"></div>
+            <fieldset class="field" id="bm-ed-code"><legend class="label">Code</legend>
+              <div class="mk-chips">
+                <label class="mk-chip"><input type="radio" name="bm-ed-code" id="bm-ed-code-P" value="P"><span class="code-dot code-P" aria-hidden="true">P</span><span>Pain</span></label>
+                <label class="mk-chip"><input type="radio" name="bm-ed-code" id="bm-ed-code-T" value="T"><span class="code-dot code-T" aria-hidden="true">T</span><span>Tightness</span></label>
+                <label class="mk-chip"><input type="radio" name="bm-ed-code" id="bm-ed-code-X" value="X"><span class="code-dot code-X" aria-hidden="true">X</span><span>Trigger point</span></label>
+                <label class="mk-chip"><input type="radio" name="bm-ed-code" id="bm-ed-code-I" value="I"><span class="code-dot code-I" aria-hidden="true">I</span><span>Injury</span></label>
+              </div>
+            </fieldset>
+          </div>
+          <fieldset class="field" id="bm-ed-intensity"><legend class="label">Intensity 0 to 10</legend><div class="mk-int" id="bm-ed-int"></div></fieldset>
+          <div class="field"><label class="label" for="bm-ed-note">Notes</label><input class="input" id="bm-ed-note" autocomplete="off"></div>
+          <div class="actions split"><button type="button" class="btn btn-outline btn-danger" id="bm-ed-delete">Delete marker</button><button type="button" class="btn btn-teal" id="bm-ed-done">Done</button></div>
+        </div>
+        <p class="label" style="margin-top:22px" id="bm-findings-label">Key findings</p>
+        <div class="table-wrap">
+          <table class="findings" id="bm-findings" aria-labelledby="bm-findings-label">
+            <thead><tr><th scope="col" class="col-area">Area</th><th scope="col" class="col-code">Code</th><th scope="col" class="col-int">Intensity 0 to 10</th><th scope="col">Notes</th></tr></thead>
+            <tbody id="bm-rows"></tbody>
+          </table>
+        </div>
+        <div class="actions"><button type="button" class="btn btn-outline btn-small" id="bm-add-row">Add row</button></div>
+      </div>
+
+      <!-- 3.5 Session notes -->
+      <div class="card sub" id="sub-sessions">
+        <div class="sub-head"><span class="sub-dot" aria-hidden="true"></span><span class="sub-no">3.5</span><h3 class="sub-title">Session Notes</h3><span class="role role-yellow">Mandatory</span></div>
+        <div id="sessions"></div>
+        <div class="actions"><button type="button" class="btn btn-outline" id="sn-add">Add session</button></div>
+      </div>
+
+    </div>
+    <div class="actions"><button type="button" class="btn btn-teal" id="submit-assessment" data-submit="assessment">Submit</button></div>
+  </section>
+
+  <!-- ===================== 04 RECOVERY PLAN ===================== -->
+  <section class="part" id="part-recoveryPlan" aria-labelledby="h-recoveryPlan">
+    <div class="card part-card">
+      <div class="part-head">
+        <h2 class="tab" id="h-recoveryPlan" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">04</span>Recovery Plan</span></h2>
+        <span class="role role-yellow">RS and Reception</span>
+      </div>
+      <div class="stack">
+        <div class="grid g2">
+          <div class="field"><label class="label" for="rp-focus">Plan focus / goal</label><input class="input" id="rp-focus" data-bind="recoveryPlan.focus" autocomplete="off"></div>
+          <div class="field"><label class="label" for="rp-phase">Training phase / upcoming event</label><input class="input" id="rp-phase" data-bind="recoveryPlan.trainingPhase" autocomplete="off"></div>
+        </div>
+        <div class="field" id="rp-services-field">
+          <div class="svc-cols" id="rp-services"></div>
+        </div>
+        <div class="field"><label class="label" for="rp-home">Home recommendations (stretching, mobility, exercise)</label><textarea class="input" id="rp-home" data-bind="recoveryPlan.home" rows="4"></textarea></div>
+        <div class="reco">
+          <fieldset class="field" id="rp-option" data-bind="recoveryPlan.option" data-kind="single">
+            <legend class="panel-title">Recommended option</legend>
+            <div class="options inline">
+              <label class="check"><input type="radio" name="rp-option" id="rp-option-single" value="singleSession"><span>Single session</span></label>
+              <label class="check"><input type="radio" name="rp-option" id="rp-option-package" value="sessionPackage"><span>Session package</span></label>
+              <label class="check"><input type="radio" name="rp-option" id="rp-option-membership" value="membership"><span>Membership</span></label>
+            </div>
+          </fieldset>
+          <div class="field"><label class="label" for="rp-package-name">Package / membership name</label><input class="input" id="rp-package-name" data-bind="recoveryPlan.packageName" autocomplete="off"></div>
+        </div>
+        <div class="grid g3">
+          <div class="field"><label class="label" for="rp-next">Next appointment</label><input class="input" type="date" id="rp-next" data-bind="recoveryPlan.nextAppointment"></div>
+          <div class="field"><label class="label" for="rp-reassess">Reassessment date</label><input class="input" type="date" id="rp-reassess" data-bind="recoveryPlan.reassessmentDate"></div>
+          <div class="field"><label class="label" for="rp-by">Recommended by</label><input class="input" id="rp-by" data-bind="recoveryPlan.recommendedBy" list="rs-names" autocomplete="off" autocapitalize="words"></div>
+        </div>
+        <div class="after">
+          <h3 class="panel-title" id="h-after">After the session</h3>
+          <div class="options g2-after" role="group" aria-labelledby="h-after">
+            <label class="check"><input type="checkbox" id="rp-after-told" data-bind="recoveryPlan.after.toldToExpect"><span>Client told to expect their recovery plan</span></label>
+            <label class="check"><input type="checkbox" id="rp-after-shared" data-bind="recoveryPlan.after.planShared"><span>Recovery plan shared with client</span></label>
+            <label class="check"><input type="checkbox" id="rp-after-booked" data-bind="recoveryPlan.after.nextBooked"><span>Next session booked</span></label>
+            <label class="check"><input type="checkbox" id="rp-after-purchased" data-bind="recoveryPlan.after.purchased"><span>Package / membership purchased</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="actions"><button type="button" class="btn btn-teal" id="submit-recoveryPlan" data-submit="recoveryPlan">Submit</button></div>
+    </div>
+  </section>
+
+  <div class="actions end-actions"><button type="button" class="btn btn-outline" id="new-assessment">New assessment</button></div>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-co">reSTART Wellness Health Club L.L.C S.P.C</p>
+      <p class="foot-addr">Villa 134, Yaw As Simaynah St, Al Muntazah, Abu Dhabi, UAE &nbsp;|&nbsp; +971 50 718 1874</p>
+    </div>
+    <div class="foot-right">
+      <p class="foot-handle">@restartuae</p>
+      <p class="foot-note">Confidential client record</p>
+    </div>
+  </div>
+</footer>
+
+<datalist id="rs-names"></datalist>
+
+<!-- ===================== CONTRAINDICATION SHEET ===================== -->
+<div class="sheet" id="ci-sheet" role="dialog" aria-modal="true" aria-labelledby="ci-sheet-title" hidden>
+  <div class="sheet-bar">
+    <div class="wrap sheet-bar-in">
+      <button type="button" class="btn btn-teal" id="ci-back-top">Back to Contraindications</button>
+      <h2 class="sheet-title" id="ci-sheet-title" tabindex="-1"></h2>
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" id="ci-lang-en" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" id="ci-lang-ar" data-lang="ar" class="ar" lang="ar" aria-pressed="false">عربي</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <form class="doc" id="ci-doc" novalidate>
+      <img class="doc-mark" src="data:image/png;base64,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" alt="" width="56" height="56">
+      <div id="ci-intro"></div>
+      <div id="ci-groups"></div>
+      <div class="med">
+        <fieldset class="field med-q" id="ci-med-field">
+          <legend class="q" id="ci-med-q"></legend>
+          <div class="options inline">
+            <label class="check"><input type="radio" name="ci-med" id="ci-med-yes" value="yes"><span id="ci-med-yes-label"></span></label>
+            <label class="check"><input type="radio" name="ci-med" id="ci-med-no" value="no"><span id="ci-med-no-label"></span></label>
+          </div>
+        </fieldset>
+        <div class="field" id="ci-med-details-field" hidden style="margin-top:10px"><label class="label" for="ci-med-details" id="ci-med-details-label"></label><input class="input" id="ci-med-details" autocomplete="off"></div>
+      </div>
+      <p class="decl" id="ci-decl"></p>
+      <div class="sign-row">
+        <div class="field" id="ci-name-field"><label class="label" for="ci-name" id="ci-name-label"></label><input class="input" id="ci-name" autocomplete="off" autocapitalize="words"></div>
+        <div class="field" id="ci-date-field"><label class="label" for="ci-date" id="ci-date-label"></label><input class="input" type="date" id="ci-date"></div>
+      </div>
+      <div class="field" id="ci-sig-field" style="margin-top:20px"><span class="label" id="ci-sig-label"></span><div class="sig tall" id="ci-sig" role="group" aria-labelledby="ci-sig-label"><canvas aria-label="Signature pad"></canvas><button type="button" class="btn btn-outline btn-small sig-clear" id="ci-sig-clear" hidden></button></div></div>
+      <div class="actions split">
+        <button type="button" class="btn btn-outline" id="ci-back-bottom"></button>
+        <button type="submit" class="btn btn-teal" id="ci-submit"></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =====================================================================
+   CONFIG
+   ===================================================================== */
+const RS_NAMES = ['Aaron', 'Christine', 'Louigi', 'Manuel', 'Merissa', 'Michelle', 'Mohammad', 'Nuwandi', 'Shaleen', 'Shamal', 'Suha'];
+const AUTOSAVE_MS = 5000;
+const STORAGE_PREFIX = 'restart-ia:';
+const PAIN_COLORS = ['#2DA4AD', '#45ADA6', '#5FB69E', '#7FBF8F', '#A3C77C', '#C9CC63', '#ECCB3C', '#FDC317', '#F4A42A', '#E67E33', '#C8423B'];
+const PARTS = ['registration', 'contraindications', 'assessment', 'recoveryPlan'];
+const PART_NAMES = { registration: 'Registration', contraindications: 'Contraindications', assessment: 'Assessment', recoveryPlan: 'Recovery Plan' };
+
+/* Contraindication tiles. Two tiles share the massage form, so signing it once marks both. */
+const TILES = [
+  { id: 'sportsMassage', label: 'Sports Massage / Recovery Session', form: 'massage' },
+  { id: 'assistedStretching', label: 'Assisted Stretching', form: 'massage' },
+  { id: 'cryotherapy', label: 'Cryotherapy', form: 'cryotherapy' },
+  { id: 'compressionTherapy', label: 'Compression Therapy', form: 'compression' },
+  { id: 'infraredSauna', label: 'Infrared Sauna', form: 'infraredSauna' },
+  { id: 'floatationTherapy', label: 'Floatation Therapy', form: 'floatation' }
+];
+
+const SERVICES = [
+  ['sportsMassage', 'Sports Massage'], ['recoverySession', 'Recovery Session'], ['assistedStretching', 'Assisted Stretching'], ['cryotherapy', 'Cryotherapy'],
+  ['infraredSauna', 'Infrared Sauna'], ['compressionTherapy', 'Compression Therapy'], ['floatationTherapy', 'Floatation Therapy'], ['recoveryAssessment', 'Recovery Assessment']
+];
+
+const TECHNIQUES = [
+  ['deepTissue', 'Deep tissue'], ['triggerPoint', 'Trigger point therapy'], ['myofascialRelease', 'Myofascial release'],
+  ['assistedStretching', 'Assisted stretching'], ['flushLight', 'Flush / light massage'], ['mobilityWork', 'Mobility work']
+];
+const PRESSURES = [['light', 'Light'], ['medium', 'Medium'], ['firm', 'Firm'], ['adjustedToTolerance', 'Adjusted to tolerance']];
+
+/* Official contraindication wording. English is verbatim from the reSTART forms; Arabic is rebuilt from the same forms.
+   Items are [English, Arabic] pairs in the order of the printed form. */
+const COMMON = {
+  intro: {
+    en: [
+      'Dear Customer,',
+      'Your safety means a lot to us, and we want to take all the necessary precautions before moving forward.',
+      'reSTART is not a medical facility and despite world-class equipment and professional staff, considerations of your health and safety can limit what we can do. We put our customers first and we don\'t want anyone getting injured or hurt during recovery. Some contraindications won\'t necessarily stop you from getting the treatment, but we might ask you to provide us with your doctor\'s permission.',
+      'Kindly read the following contraindications for your treatment. If you have/ are experiencing any of the conditions listed below, please let us know beforehand.'
+    ],
+    ar: [
+      'عميلنا العزيز،',
+      'نظراً للأهمية سلامتك، فإننا نرغب في إتخاذ جميع الإحتياطات اللازمة قبل الإنتقال إلى المرحلة التالية.',
+      'لا تعتبر ريستارت منشأة طبية، فرغم توفرها على تجهيزات ذات معايير عالمية وتمتعها بفريق إحترافي، إلا أن اعتبارات صحتك وسلامتك يمكن أن تحد مما يمكننا القيام به. نحن نضع عملائنا فوق كل إعتبار، كما لا نريد أن يتعرض أي شخص لأي جروح أو إصابات خلال فترة الأستشفاء . غير أنه يمكننا أن نطلب منك تزويدنا بترخيص من الطبيب الخاص بك لتجنب ايقاف فترة أستشفائك لدينا او للتأكد من سلامتك لتجنب حدوث أي اعراض .',
+      'يرجى قراءة موانع الإستخدام التالية المتعلقة بأستشفائك . في حالة كنت تعاني من/ أو تعرضت لأي من الحالات المذكورة أدناه، فيرجى أبلاغنا بذالك مسبقاً .'
+    ]
+  },
+  declaration: {
+    en: 'I, the undersigned, declare that I do not suffer from any of the contraindications mentioned above. I agree that all <b>reSTART</b> services are not medical treatments.',
+    ar: 'أنا الموقع أدناه أعلن أنني لا أعاني من أي من موانع الاستعمال المذكورة أعلاه. أوافق على أن جميع خدمات <b>ريستارت</b> ليست علاجات طبية .'
+  }
+};
+
+/* Labels inside the form. Medication, Name, Date, Signature, Yes and No in Arabic come from the printed form;
+   Back, Submit, Clear and the messages in Arabic are new UI words. */
+const UI = {
+  en: { medQ: 'Are you currently taking any medication?', yes: 'YES', no: 'NO', specify: 'If yes, please specify.', name: 'Name', date: 'Date', signature: 'Signature',
+        back: 'Back to Contraindications', submit: 'Submit', clear: 'Clear',
+        msgSign: 'Please sign here.', msgMed: 'Please answer this question.', msgSpecify: 'Please list the medication.', msgName: 'Please enter the name.', msgDate: 'Please choose the date.' },
+  ar: { medQ: 'هل تتناول حاليا أي أدوية؟', yes: 'نعم', no: 'لا', specify: 'في حالة الرد بنعم ، يرجى التحديد.', name: 'الأسم', date: 'التاريخ', signature: 'التوقيع',
+        back: 'العودة إلى موانع الاستخدام', submit: 'إرسال', clear: 'مسح',
+        msgSign: 'يرجى التوقيع هنا.', msgMed: 'يرجى الإجابة على هذا السؤال.', msgSpecify: 'يرجى ذكر الأدوية.', msgName: 'يرجى كتابة الاسم.', msgDate: 'يرجى اختيار التاريخ.' }
+};
+
+const FORMS = {
+  massage: {
+    name: 'Sports Massage / Recovery Session',
+    bar: 'Sports Massage, Recovery Session & Assisted Stretching',
+    groups: [
+      { title: { en: 'Sports Massage/Recovery Session Contraindications', ar: 'موانع إستخدام العلاج بالتدليك / جلسة الأستشفاء' },
+        items: [
+          ['Fever (37.8 °C)', 'الحمى (37.8°).'],
+          ['Contagious diseases including the COVID-19 or Flu', 'الأمراض المعدية بما في ذلك الزكام أو الكوفيد 19 .'],
+          ['Under the influence of alcohol/drugs', 'تحت تأثير الكحول/العقاقير.'],
+          ['Recent Operations or Acute Injuries', 'العمليات الجراحية الحديثة أو الإصابات الحادة.'],
+          ['Neuritis', 'الإلتهاب العصبي.'],
+          ['Skin Diseases - Psoriasis, Eczema or Acne', 'الأمراض الجلدية مثل الخثار أو الصدفية أو الإكزيم.'],
+          ['Cardiovascular conditions – Thrombosis, Phlebitis, Hypertension, other heart conditions', 'إلتهاب الوريد، إرتفاع ضغط الدم، الأمراض القلبية الأخرى.'],
+          ['Fibromyalgia', 'الألم العضلي الليفي'],
+          ['Inflammation, including Arthritis', 'الإلتهابات بما في ذلك إلتهاب المفاصل.'],
+          ['Osteoporosis', 'هشاشة العظام.'],
+          ['Cancer', 'داء السرطان.'],
+          ['Nervous or Psychotic Conditions', 'الأمراض العصبية أو النفسية .'],
+          ['Epilepsy', 'داء الصرع.'],
+          ['Advanced Diabetes', 'الحالات المتقدمة لداء السكري.'],
+          ['Trapped or Pinched Nerves', 'الأعصاب المحتبسة أو المتضررة.'],
+          ['Pregnancy (Especially 1st Trimester)', 'الحمل (خاصة في الثلاث شهور الأولى ).']
+        ] },
+      { title: { en: 'Local Massage Treatment Contraindications', ar: 'موانع إستخدام العلاج بالتدليك الموضعي' },
+        items: [
+          ['Varicose Veins', 'داء الدوالي.'],
+          ['Undiagnosed Lumps', 'الإنتفاخات غير المشخصة.'],
+          ['Bruising', 'الكدمات.'],
+          ['Cuts', 'الجروح.'],
+          ['Abrasions', 'الخدوش.'],
+          ['Sunburn', 'الحروق'],
+          ['Rashes', 'الحروق الشمسية .']
+        ] }
+    ]
+  },
+  cryotherapy: {
+    name: 'Cryotherapy',
+    bar: 'Cryotherapy',
+    groups: [
+      { title: { en: 'Cryotherapy Contraindications', ar: 'موانع إستخدام العلاج بالتبريد' },
+        items: [
+          ['Hypertension', 'ارتفاع ضغط الدم'],
+          ['Heart Attacks (within the last 6 months)', 'النوبات القلبية (خلال آخر 6 أشهر)'],
+          ['Heart Disease', 'أمراض القلب'],
+          ['Venous Blood Clots', 'تجلطات الدم الوريدية'],
+          ['Frostbite', 'قضمة الصقيع ( تجمد الاطراف )'],
+          ['Hypothyroidism', 'قصور في الغدة الدرقية'],
+          ['Respiratory Disorders', 'اضطرابات الجهاز التنفسي'],
+          ['Congestive Heart Failure', 'فشل القلب'],
+          ['Chronic Pulmonary Disease', 'أمراض الرئة المزمنة'],
+          ['Cancer', 'سرطان'],
+          ['Pacemaker', 'جهاز تنظيم ضربات القلب'],
+          ['Thrombosis', 'تجلطات الدم'],
+          ['Blood Supply Disorders', 'اضطرابات الدورة الدموية'],
+          ['Severe Anemia', 'فقر الدم الشديد'],
+          ['Cold Hypersensitivity', 'فرط الحساسية الباردة'],
+          ['Heavy Consumerist Diseases (Abnormal Bleeding)', 'أمراض تسببت في نزيف (نزيف الغير طبيعي)'],
+          ['Bacterial/Viral Skin Infections', 'الالتهابات الجلدية/ البكتيرية / الفيروسية'],
+          ['Wound Healing Disorders (open sores or discharging wound/skin conditions)', 'اضطرابات جلدية أو الجروح (القروح المفتوحة أو حالات الجروح/الجلد المفرزة)'],
+          ['Recent Heart Surgery', 'جراحة القلب'],
+          ['Raynaud\'s Disease', 'مرض رينود'],
+          ['Polyneuropathies', 'اعتلال الأعصاب'],
+          ['Pregnancy (Especially 1st Trimester)', 'الحمل (خاصة في الثلث الأول من الحمل)'],
+          ['Restriction to weight-bearing walk on the spot', 'تقييد المشي مع رفع الأثقال على الفور.']
+        ] }
+    ]
+  },
+  compression: {
+    name: 'Compression Therapy',
+    bar: 'Compression Therapy',
+    groups: [
+      { title: { en: 'Compression Therapy Contraindications', ar: 'موانع إستخدام العلاج بالضغط' },
+        items: [
+          ['Current or Unstable fractures, Sprains and Dislocations', 'الكسور الحالية أو غير المستقرة والالتواءات والخلع'],
+          ['Recent Surgery/ Fresh Sutures or Stitches', 'الجراحة الحديثة/ الغرز أو الغرز الحديثة'],
+          ['Open Wounds, Contusions, or Abrasions', 'الجروح المفتوحة أو الكدمات أو السحجات'],
+          ['Thrombosis', 'تجلط الدم'],
+          ['Severe Atherosclerosis or other Ischemic Vascular Diseases', 'تصلب الشرايين الشديد أو أمراض الأوعية الدموية الأخرى'],
+          ['Severe Congestive Heart Failure', 'قصور أو ضعف في عضلة القلب'],
+          ['Existing Pulmonary Oedema / Embolism', 'الأنصمتم الرئوي أو اضرابات في الرئة أو المجرى التنفسي'],
+          ['Deformity of the limbs', 'تشوه الأطراف'],
+          ['Any dressed local skin or tissue conditions that could interfere with the treatment, such as Gangrene, untreated or infected wounds, recent skin grafts, and Dermatitis', 'أي أمراض جلدية أو أنسجة موضعية يمكن أن تتداخل مع العلاج، مثل الغرغرينا، والجروح غير المعالجة أو المصابة، وترقيع الجلد الحديث، والتهاب الجلد'],
+          ['Cancer', 'سرطان'],
+          ['Limb infections', 'التهابات الأطراف'],
+          ['Pregnancy (Especially 1st Trimester)', 'الحمل (خاصة في الثلث الأول من الحمل)'],
+          ['Hypertension', 'أرتفاع ضغط الدم']
+        ] }
+    ]
+  },
+  infraredSauna: {
+    name: 'Infrared Sauna',
+    bar: 'Infrared Sauna',
+    groups: [
+      { title: { en: 'Infrared Sauna Contraindications', ar: 'موانع إستخدام ساونا الأشعة تحت الحمراء' },
+        items: [
+          ['Under the age of 18 OR over the age of 65', 'أقل من 18 عامًا أو أكبر من 65 عامًا'],
+          ['Consumption of large meal before treatment', 'تناول وجبة بكمية كبيرة قبل العلاج'],
+          ['Cardiovascular Conditions', 'أمراض القلب والأوعية الدموية'],
+          ['Under the influence of alcohol/drugs', 'تحت تأثير الكحول/المخدرات'],
+          ['Chronic conditions/diseases associated with reduced ability to sweat or perspire', 'الحالات / الأمراض المزمنة المرتبطة بانخفاض القدرة على التعرق أو التعرق.'],
+          ['Multiple Sclerosis, tumours of the Central Nervous System and Diabetes with Neuropathy-Impaired Sweating', 'التصلب المتعدد وأورام الجهاز العصبي المركزي والسكري المصحوب بالاعتلال العصبي والتعرق'],
+          ['Haemophilia/prone to bleeding', 'الهيموفيليا / المعرضة للنزيف'],
+          ['Fever (37.8 °C)', 'الحمى (37.8°).'],
+          ['Sensitivity or Insensitivity to Heat', 'الحساسية أو عدم الحساسية للحرارة'],
+          ['Recent/Acute joint injury (first 48 hours after injury or if swelling is persistent)', 'إصابة المفصل الحديثة/الحادة (أول 48 ساعة بعد الإصابة أو إذا كان التورم مستمرًا)'],
+          ['Metal Implants', 'زراعة المعادن'],
+          ['Pacemakers/Defibrillators', 'أجهزة تنظيم ضربات القلب'],
+          ['Pregnancy (Especially 1st Trimester)', 'الحمل (خاصة في الثلث الأول من الحمل)']
+        ] }
+    ]
+  },
+  floatation: {
+    name: 'Floatation Therapy',
+    bar: 'Floatation Therapy',
+    groups: [
+      { title: { en: 'Floatation Therapy Contraindications', ar: 'موانع إستخدام العلاج بالتعويم' },
+        items: [
+          ['Epilepsy', 'الصرع'],
+          ['Incontinence', 'سلس البول'],
+          ['Kidney or Respiratory Infections', 'التهابات الكلى أو الجهاز التنفسي'],
+          ['Infectious Disease/Skin Conditions', 'الأمراض المعدية/الحالات الجلدية'],
+          ['Open Wounds', 'الجروح المفتوحة'],
+          ['Under the influence of any alcohol/drugs', 'تحت تأثير أي نوع من الكحول أو المخدرات'],
+          ['Under the age of 18 and without prior parental consent', 'أقل من 18 عامًا وبدون موافقة مسبقة من الوالدين'],
+          ['Fresh Tattoos', 'الوشم الجديد'],
+          ['Skin Cancer', 'سرطان الجلد'],
+          ['Ear Inflammation', 'التهاب الأذن'],
+          ['Depilation (Less than 2 days before the treatment)', 'إزالة الشعر (أقل من يومين قبل العلاج)'],
+          ['Sensitivity to Chlorine, Bromine, Sulphate or Magnesium', 'حساسية للكلور أو البروم أو الكبريتات أو المغنيسيوم'],
+          ['Psychosis and Severe Mental Disorders', 'الاضطرابات النفسية أو الذهنية الشديدة'],
+          ['Asthma', 'الربو'],
+          ['Heart Conditions and Hypotension', 'أمراض القلب وانخفاض ضغط الدم'],
+          ['Any Contagious Disease, incl. Diarrhoea or Gastroenteritis (and for 14 days following)', 'أي مرض معدي، بما في ذلك. الإسهال أو التهاب المعدة والأمعاء (لمدة 14 يومًا بعد ذلك)'],
+          ['Skin Ulcers', 'تقرحات الجلد'],
+          ['Menstruation', 'الحيض'],
+          ['Freshly Dyed hair', 'شعر مصبوغ حديثا'],
+          ['Thrombosis', 'تجلطات الدم'],
+          ['Gynaecological Infections', 'الالتهابات النسائية'],
+          ['Pregnancy (Especially 1st Trimester)', 'الحمل (خاصة في الثلث الأول من الحمل)']
+        ] }
+    ]
+  }
+};
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const pad2 = n => String(n).padStart(2, '0');
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtDate = iso => { if (!iso) return ''; const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number); return (y && m && d) ? `${d} ${MONTHS[m - 1]} ${y}` : ''; };
+const uid = () => Math.random().toString(36).slice(2, 10);
+const filled = v => (Array.isArray(v) ? v.length > 0 : (typeof v === 'string' ? v.trim() !== '' : !!v));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const reduceMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clone = o => JSON.parse(JSON.stringify(o));
+
+function getPath(obj, path) {
+  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+}
+function setPath(obj, path, value) {
+  const keys = path.split('.');
+  let o = obj;
+  keys.slice(0, -1).forEach((k, i) => {
+    if (o[k] == null) o[k] = /^\d+$/.test(keys[i + 1]) ? [] : {};
+    o = o[k];
+  });
+  o[keys[keys.length - 1]] = value;
+}
+
+/* localStorage, wrapped so the form still works when storage is blocked. */
+const store = {
+  get(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+  remove(k) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+};
+
+/* =====================================================================
+   STATE (one object holds everything; see README at the end of the file)
+   ===================================================================== */
+function newSession(n) {
+  return { id: uid(), date: todayISO(), number: String(n), rs: '', techniques: [], pressure: '', areasResponse: '',
+           handover: { focus: '', precautions: '' } };
+}
+function emptyState() {
+  const services = {};
+  SERVICES.forEach(([k]) => { services[k] = { selected: false, frequency: '' }; });
+  return {
+    meta: { version: 1, updatedAt: null, submitted: {} },
+    registration: { clientName: '', clientId: '', registrationDate: todayISO(), dateOfBirth: '', gender: '', preferredRS: '' },
+    contraindications: {
+      additionalPrecautions: '',
+      forms: { massage: null, cryotherapy: null, compression: null, infraredSauna: null, floatation: null }
+    },
+    assessment: {
+      redFlags: { calfSwelling: false, chestPain: false, noneSafe: false },
+      profile: { occupation: '', sport: '', sessionsPerWeek: '', goals: [], onset: '', duration: '', mainAreas: '', painLevel: '', history: '', findings: '' },
+      consent: { explained: false, questions: false, informed: false, clientSignature: '', rsSignature: '', date: todayISO() },
+      bodyMap: { markers: [], manualRows: [0, 1, 2].map(() => ({ area: '', code: '', intensity: '', notes: '' })) },
+      sessions: [newSession(1)]
+    },
+    recoveryPlan: {
+      focus: '', trainingPhase: '', services, home: '', option: '', packageName: '',
+      nextAppointment: '', reassessmentDate: '', recommendedBy: '',
+      after: { toldToExpect: false, planShared: false, nextBooked: false, purchased: false }
+    }
+  };
+}
+let state = emptyState();
+let dirty = false;
+
+/* =====================================================================
+   RENDER: repeated pieces built from config
+   ===================================================================== */
+function renderDatalist() {
+  $('#rs-names').innerHTML = RS_NAMES.map(n => `<option value="${esc(n)}"></option>`).join('');
+}
+
+function renderPainTiles() {
+  $('#pr-pain-tiles').innerHTML = PAIN_COLORS.map((c, i) =>
+    `<label class="pain-tile" style="--tile:${c}" for="pr-pain-${i}"><span aria-hidden="true">${i}</span><input type="radio" name="pr-pain" id="pr-pain-${i}" value="${i}" aria-label="${i}"></label>`
+  ).join('');
+}
+
+function renderServices() {
+  const col = list => `<div><div class="svc-head"><span class="label">Recommended services</span><span class="label">Frequency</span></div>${list.map(([k, label]) => `
+    <div class="svc-row">
+      <label class="check"><input type="checkbox" id="rp-svc-${k}" data-bind="recoveryPlan.services.${k}.selected"><span>${esc(label)}</span></label>
+      <input class="input" id="rp-freq-${k}" data-bind="recoveryPlan.services.${k}.frequency" aria-label="${esc(label)} frequency" autocomplete="off">
+    </div>`).join('')}</div>`;
+  $('#rp-services').innerHTML = col(SERVICES.slice(0, 4)) + col(SERVICES.slice(4));
+}
+
+function renderFindingRows() {
+  const markers = state.assessment.bodyMap.markers;
+  const mk = markers.map((m, n) => `
+    <tr class="mk-row${m.id === bm.selected ? ' sel' : ''}" data-mk="${m.id}">
+      <td><input id="bm-mk-${m.id}-area" data-mk-field="area" value="${esc(m.area || '')}" aria-label="Marker ${n + 1} area" autocomplete="off"></td>
+      <td class="code-cell"><button type="button" class="code-dot code-${m.code}" data-select="${m.id}" aria-label="Marker ${n + 1}: ${esc(CODES[m.code].label)}. Edit">${m.code}</button></td>
+      <td><input id="bm-mk-${m.id}-intensity" data-mk-field="intensity" value="${esc(m.intensity)}" aria-label="Marker ${n + 1} intensity" inputmode="numeric" maxlength="2" autocomplete="off"></td>
+      <td><input id="bm-mk-${m.id}-note" data-mk-field="note" value="${esc(m.note || '')}" aria-label="Marker ${n + 1} notes" autocomplete="off"></td>
+    </tr>`).join('');
+  const manual = state.assessment.bodyMap.manualRows.map((r, i) => `
+    <tr>
+      <td><input id="bm-row-${i}-area" data-bind="assessment.bodyMap.manualRows.${i}.area" aria-label="Row ${i + 1} area" autocomplete="off"></td>
+      <td><input id="bm-row-${i}-code" data-bind="assessment.bodyMap.manualRows.${i}.code" aria-label="Row ${i + 1} code" autocomplete="off" autocapitalize="characters" maxlength="1"></td>
+      <td><input id="bm-row-${i}-intensity" data-bind="assessment.bodyMap.manualRows.${i}.intensity" aria-label="Row ${i + 1} intensity" inputmode="numeric" maxlength="2" autocomplete="off"></td>
+      <td><input id="bm-row-${i}-notes" data-bind="assessment.bodyMap.manualRows.${i}.notes" aria-label="Row ${i + 1} notes" autocomplete="off"></td>
+    </tr>`).join('');
+  $('#bm-rows').innerHTML = mk + manual;
+  $$('#bm-rows [data-bind]').forEach(el => { const v = getPath(state, el.dataset.bind); el.value = v == null ? '' : v; });
+}
+
+function sessionHTML(s, i, open, multi) {
+  const p = `assessment.sessions.${i}`;
+  const id = `sn-${i}`;
+  const head = multi ? `
+    <button type="button" class="session-sum" data-session-toggle="${s.id}" aria-expanded="${open}" aria-controls="${id}-body">
+      <span class="sum-no">Session ${esc(s.number || i + 1)}</span>
+      <span class="sum-date" data-sum="date">${esc(fmtDate(s.date))}</span>
+      <span class="sum-rs" data-sum="rs">${esc(s.rs || '')}</span>
+      <span class="sum-focus" data-sum="focus">${esc((s.handover && s.handover.focus) || '')}</span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>` : '';
+  return `
+  <div class="session" data-session="${i}" id="${id}">${head}
+  <div class="session-body stack" id="${id}-body"${open ? '' : ' hidden'}>
+    <div class="grid g3">
+      <div class="field"><label class="label" for="${id}-date">Session date</label><input class="input" type="date" id="${id}-date" data-bind="${p}.date"></div>
+      <div class="field"><label class="label" for="${id}-number">Session no.</label><input class="input" id="${id}-number" data-bind="${p}.number" inputmode="numeric" autocomplete="off"></div>
+      <div class="field"><label class="label" for="${id}-rs">Recovery Specialist</label><input class="input" id="${id}-rs" data-bind="${p}.rs" list="rs-names" autocomplete="off" autocapitalize="words"></div>
+    </div>
+    <fieldset class="field" id="${id}-techniques" data-bind="${p}.techniques" data-kind="multi">
+      <legend class="label">Techniques used</legend>
+      <div class="options">${TECHNIQUES.map(([k, l]) => `<label class="check"><input type="checkbox" id="${id}-tech-${k}" value="${k}"><span>${esc(l)}</span></label>`).join('')}</div>
+    </fieldset>
+    <fieldset class="field pressure" id="${id}-pressure" data-bind="${p}.pressure" data-kind="single">
+      <legend class="label">Pressure</legend>
+      <div class="options inline">${PRESSURES.map(([k, l]) => `<label class="check"><input type="radio" name="${id}-pressure" id="${id}-pressure-${k}" value="${k}"><span>${esc(l)}</span></label>`).join('')}</div>
+    </fieldset>
+    <div class="field"><label class="label" for="${id}-areas">Areas treated and client response</label><textarea class="input" id="${id}-areas" data-bind="${p}.areasResponse" rows="4"></textarea></div>
+    <div class="handover">
+      <h4 class="panel-title">Handover for next session</h4>
+      <div class="grid g2">
+        <div class="field" id="${id}-focus-field"><label class="label" for="${id}-focus">Focus areas for next session</label><textarea class="input short" id="${id}-focus" data-bind="${p}.handover.focus" rows="3"></textarea></div>
+        <div class="field" id="${id}-precautions-field"><label class="label" for="${id}-precautions">Precautions / what to avoid</label><textarea class="input short" id="${id}-precautions" data-bind="${p}.handover.precautions" rows="3"></textarea></div>
+      </div>
+    </div>
+  </div>
+  </div>`;
+}
+const openSessions = new Set();
+function renderSessions() {
+  const list = state.assessment.sessions;
+  if (!list.length) list.push(newSession(1));
+  const ids = new Set(list.map(x => x.id));
+  [...openSessions].forEach(x => { if (!ids.has(x)) openSessions.delete(x); });
+  if (!openSessions.size) openSessions.add(list[list.length - 1].id);
+  const multi = list.length > 1;
+  $('#sessions').innerHTML = list.map((x, i) => sessionHTML(x, i, openSessions.has(x.id), multi)).join('');
+}
+function updateSessionSummary(i) {
+  const x = state.assessment.sessions[i];
+  const root = document.getElementById(`sn-${i}`);
+  if (!x || !root) return;
+  const set = (k, v) => { const el = $(`[data-sum="${k}"]`, root); if (el) el.textContent = v; };
+  set('date', fmtDate(x.date)); set('rs', x.rs || ''); set('focus', (x.handover && x.handover.focus) || '');
+}
+function addSession() {
+  const list = state.assessment.sessions;
+  const next = Math.max(0, ...list.map(x => parseInt(x.number, 10) || 0)) + 1;
+  const x = newSession(next);
+  list.push(x);
+  openSessions.clear();
+  openSessions.add(x.id);
+  renderSessions();
+  applyState();
+  markDirty();
+  const el = document.getElementById(`sn-${list.length - 1}`);
+  if (el) el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+  toast(`Session ${x.number} added`);
+}
+function toggleSession(id) {
+  if (openSessions.has(id)) openSessions.delete(id); else openSessions.add(id);
+  const list = state.assessment.sessions;
+  const i = list.findIndex(x => x.id === id);
+  const btn = $(`[data-session-toggle="${id}"]`);
+  const body = document.getElementById(`sn-${i}-body`);
+  if (btn && body) { const open = openSessions.has(id); btn.setAttribute('aria-expanded', String(open)); body.hidden = !open; }
+}
+function ensureLatestSessionOpen() {
+  const list = state.assessment.sessions, last = list[list.length - 1];
+  if (last && !openSessions.has(last.id)) toggleSession(last.id);
+}
+
+/* Body figures drawn from the approved PDF geometry (points, centred on x = 0). */
+function figureSVG(view) {
+  const G = FIG_COLORS.outline, W = FIG_COLORS.fill, D = FIG_COLORS.dash;
+  const limbs = [
+    [0, 177.2, 0, 188.3, 11.45, 9.25],
+    [-22.2, 193.85, -30.52, 227.15, 11.82, 9.62], [-30.52, 227.15, -35.15, 260.45, 9.97, 7.77],
+    [22.2, 193.85, 30.52, 227.15, 11.82, 9.62], [30.52, 227.15, 35.15, 260.45, 9.97, 7.77],
+    [-9.62, 254.9, -11.1, 293.75, 17.74, 15.54], [-11.1, 293.75, -11.47, 330.75, 12.56, 10.36],
+    [9.62, 254.9, 11.1, 293.75, 17.74, 15.54], [11.1, 293.75, 11.47, 330.75, 12.56, 10.36]
+  ];
+  const torso = 'M-23.13 186.45L23.12 186.45C19.43 221.6 16.65 240.1 19.43 256.75L-19.43 256.75C-16.65 240.1 -19.43 221.6 -23.13 186.45Z';
+  const line = (l, w, c) => `<line x1="${l[0]}" y1="${l[1]}" x2="${l[2]}" y2="${l[3]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  const shapes = (c, white) => `
+    <path d="${torso}" fill="${c}" ${white ? '' : `stroke="${c}" stroke-width="2.2" stroke-linejoin="round"`}/>
+    <circle cx="0" cy="167.02" r="${white ? 11.47 : 12.57}" fill="${c}"/>
+    <circle cx="-35.71" cy="265.08" r="${white ? 4.81 : 5.92}" fill="${c}"/>
+    <circle cx="35.71" cy="265.08" r="${white ? 4.81 : 5.92}" fill="${c}"/>
+    <ellipse cx="-11.84" cy="337.6" rx="${white ? 4.81 : 5.92}" ry="${white ? 2.97 : 4.06}" fill="${c}"/>
+    <ellipse cx="11.84" cy="337.6" rx="${white ? 4.81 : 5.92}" ry="${white ? 2.97 : 4.06}" fill="${c}"/>`;
+  const dashes = view === 'front'
+    ? [[0, 188.3, 0, 229]]
+    : [[0, 184.6, 0, 253.05], [-12.95, 199.4, -7.4, 210.5], [12.95, 199.4, 7.4, 210.5]];
+  const left = view === 'front' ? 'R' : 'L';
+  const right = view === 'front' ? 'L' : 'R';
+  return `<svg viewBox="${VB.x} ${VB.y} ${VB.w} ${VB.h}" id="bm-svg-${view}" role="group" aria-label="${view === 'front' ? 'Front' : 'Back'} body figure" preserveAspectRatio="xMidYMid meet">
+    <g>${limbs.map(l => line(l, l[4], G)).join('')}${shapes(G, false)}${limbs.map(l => line(l, l[5], W)).join('')}${shapes(W, true)}</g>
+    <g fill="none" stroke="${D}" stroke-width="0.6" stroke-dasharray="2 2">${dashes.map(d => `<line x1="${d[0]}" y1="${d[1]}" x2="${d[2]}" y2="${d[3]}"/>`).join('')}</g>
+    <text x="-47" y="211" font-size="7.5" font-weight="700" fill="${G}" style="font-family:var(--font)" aria-hidden="true">${left}</text>
+    <text x="42.4" y="211" font-size="7.5" font-weight="700" fill="${G}" style="font-family:var(--font)" aria-hidden="true">${right}</text>
+    <g class="markers" data-view="${view}"></g>
+  </svg><figcaption class="fig-cap">${view === 'front' ? 'Front' : 'Back'}</figcaption>`;
+}
+function renderFigures() {
+  $('#bm-front').innerHTML = figureSVG('front');
+  $('#bm-back').innerHTML = figureSVG('back');
+}
+
+/* =====================================================================
+   BODY MAP: tap a code, tap the figure to drop a marker; drag to move
+   ===================================================================== */
+const VB = { x: -52, y: 150, w: 104, h: 196 };
+const FIG_COLORS = { outline: '#8FA3A5', fill: '#FFFFFF', dash: '#DDE3E4' };
+const CODES = {
+  P: { label: 'Pain', color: '#C8423B', text: '#FFFFFF' },
+  T: { label: 'Tightness', color: '#0C6980', text: '#FFFFFF' },
+  X: { label: 'Trigger point', color: '#FDC317', text: '#000000' },
+  I: { label: 'Injury', color: '#283334', text: '#FFFFFF' }
+};
+const bm = { code: 'P', selected: null, down: null, drag: null };
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const toPct = (X, Y) => ({ x: +((X - VB.x) / VB.w * 100).toFixed(2), y: +((Y - VB.y) / VB.h * 100).toFixed(2) });
+const fromPct = m => ({ X: VB.x + m.x / 100 * VB.w, Y: VB.y + m.y / 100 * VB.h });
+const findMarker = id => state.assessment.bodyMap.markers.find(m => m.id === id);
+
+function torsoHalf(y) {
+  const pts = [[186.45, 23.1], [221.6, 19.4], [240.1, 16.7], [256.75, 19.4]];
+  if (y <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    if (y <= pts[i][0]) { const [y0, w0] = pts[i - 1], [y1, w1] = pts[i]; return w0 + (w1 - w0) * (y - y0) / (y1 - y0); }
+  }
+  return pts[pts.length - 1][1];
+}
+/* Names the area from the tap position. Left and right are the client's own sides. */
+function regionName(view, X, Y) {
+  const back = view === 'back';
+  const side = ((X < 0) !== back) ? 'Right' : 'Left';
+  const ax = Math.abs(X);
+  let part, sided = true, tag = false;
+  if (Y < 180) { part = 'Head'; sided = false; tag = true; }
+  else if (Y < 188) { part = 'Neck'; sided = false; tag = true; }
+  else if (Y <= 272 && ax > torsoHalf(Y) + 1.5) { part = Y < 200 ? 'shoulder' : Y < 228 ? 'upper arm' : Y < 259 ? 'forearm' : 'hand'; tag = true; }
+  else if (Y < 200) { if (ax < 7) { part = back ? 'Upper back' : 'Upper chest'; sided = false; } else { part = 'shoulder'; tag = true; } }
+  else if (Y < 226) part = back ? 'upper back' : 'chest';
+  else if (Y < 246) part = back ? 'lower back' : 'abdomen';
+  else if (Y < 259) part = back ? 'glute' : 'hip';
+  else if (Y < 290) part = back ? 'hamstring' : 'thigh';
+  else if (Y < 300) part = back ? 'back of knee' : 'knee';
+  else if (Y < 332) part = back ? 'calf' : 'shin';
+  else { part = 'foot'; tag = true; }
+  let name = sided ? `${side} ${part}` : part;
+  if (tag) name += back ? ' (back)' : ' (front)';
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+function markerSVG(m) {
+  const { X, Y } = fromPct(m);
+  const c = CODES[m.code] || CODES.P;
+  const sel = m.id === bm.selected;
+  const label = `${c.label}, ${m.area || ''}${m.intensity !== '' && m.intensity != null ? `, intensity ${m.intensity}` : ''}`;
+  return `<g class="marker${sel ? ' sel' : ''}" data-id="${m.id}" transform="translate(${X.toFixed(2)} ${Y.toFixed(2)})" tabindex="0" role="button" aria-label="${esc(label)}">
+    <circle r="11" fill="transparent"/>
+    ${sel ? '<circle class="mk-ring" r="8.6" fill="none" stroke="#000000" stroke-width="1.2"/>' : ''}
+    <circle r="6.2" fill="${c.color}" stroke="#FFFFFF" stroke-width="1.3"/>
+    <text y="2.35" text-anchor="middle" font-size="6.6" font-weight="900" fill="${c.text}" style="font-family:var(--font);pointer-events:none">${m.code}</text>
+  </g>`;
+}
+function renderMarkers() {
+  ['front', 'back'].forEach(view => {
+    const layer = $(`#bm-svg-${view} .markers`);
+    if (layer) layer.innerHTML = state.assessment.bodyMap.markers.filter(m => m.view === view).map(markerSVG).join('');
+  });
+}
+function updateCodeButtons() {
+  $$('#bm-codes [data-code]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.code === bm.code)));
+}
+function renderIntensityChips() {
+  $('#bm-ed-int').innerHTML = Array.from({ length: 11 }, (_, i) =>
+    `<label for="bm-ed-int-${i}"><input type="radio" name="bm-ed-int" id="bm-ed-int-${i}" value="${i}">${i}</label>`).join('');
+}
+function openEditor(m) {
+  const ed = $('#bm-editor');
+  if (!m) { ed.hidden = true; return; }
+  ed.hidden = false;
+  $('#bm-ed-area').value = m.area || '';
+  $$('input[name="bm-ed-code"]').forEach(i => { i.checked = i.value === m.code; });
+  $$('input[name="bm-ed-int"]').forEach(i => { i.checked = String(m.intensity) === i.value; });
+  $('#bm-ed-note').value = m.note || '';
+}
+function selectMarker(id) {
+  bm.selected = id;
+  renderMarkers();
+  renderFindingRows();
+  openEditor(id ? findMarker(id) : null);
+}
+function deleteMarker(id) {
+  const list = state.assessment.bodyMap.markers;
+  const i = list.findIndex(m => m.id === id);
+  if (i < 0) return;
+  list.splice(i, 1);
+  if (bm.selected === id) bm.selected = null;
+  renderMarkers();
+  renderFindingRows();
+  openEditor(bm.selected ? findMarker(bm.selected) : null);
+  markDirty();
+}
+function markerChanged(m, opts = {}) {
+  renderMarkers();
+  if (opts.table) renderFindingRows();
+  if (opts.editor && bm.selected === m.id) openEditor(m);
+  markDirty();
+}
+function svgPoint(svg, e) {
+  const ctm = svg.getScreenCTM();
+  if (!ctm) return null;
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX; pt.y = e.clientY;
+  return pt.matrixTransform(ctm.inverse());
+}
+function onFigDown(e, svg) {
+  if (e.button > 0) return;
+  const g = e.target.closest('.marker');
+  bm.down = { x: e.clientX, y: e.clientY, t: Date.now(), moved: false };
+  bm.drag = g ? { id: g.dataset.id, g, svg } : null;
+  if (g) {
+    e.preventDefault();
+    try { svg.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+  }
+}
+function onFigMove(e, svg) {
+  const d = bm.down;
+  if (!d) return;
+  if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6) d.moved = true;
+  if (bm.drag && d.moved) {
+    e.preventDefault();
+    const p = svgPoint(svg, e);
+    if (!p) return;
+    bm.drag.X = clamp(p.x, VB.x + 5, VB.x + VB.w - 5);
+    bm.drag.Y = clamp(p.y, VB.y + 5, VB.y + VB.h - 5);
+    bm.drag.g.setAttribute('transform', `translate(${bm.drag.X.toFixed(2)} ${bm.drag.Y.toFixed(2)})`);
+  }
+}
+function onFigUp(e, svg, view) {
+  const d = bm.down, drag = bm.drag;
+  bm.down = null; bm.drag = null;
+  if (!d) return;
+  if (drag) {
+    const m = findMarker(drag.id);
+    if (m && d.moved && drag.X != null) {
+      Object.assign(m, toPct(drag.X, drag.Y));
+      if (m.areaAuto !== false) m.area = regionName(m.view, drag.X, drag.Y);
+      markDirty();
+    }
+    selectMarker(drag.id);
+    return;
+  }
+  if (d.moved || Date.now() - d.t > 800) return;
+  const p = svgPoint(svg, e);
+  if (!p) return;
+  const X = clamp(p.x, VB.x + 5, VB.x + VB.w - 5), Y = clamp(p.y, VB.y + 5, VB.y + VB.h - 5);
+  const m = { id: uid(), view, ...toPct(X, Y), code: bm.code, intensity: '', note: '', area: regionName(view, X, Y), areaAuto: true };
+  state.assessment.bodyMap.markers.push(m);
+  markDirty();
+  selectMarker(m.id);
+}
+function onMarkerKey(e) {
+  const g = e.target.closest && e.target.closest('.marker');
+  if (!g) return;
+  const m = findMarker(g.dataset.id);
+  if (!m) return;
+  const step = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectMarker(m.id); refocusMarker(m.id); }
+  else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteMarker(m.id); }
+  else if (step) {
+    e.preventDefault();
+    m.x = clamp(m.x + step[0], 2, 98); m.y = clamp(m.y + step[1], 2, 98);
+    const { X, Y } = fromPct(m);
+    if (m.areaAuto !== false) m.area = regionName(m.view, X, Y);
+    bm.selected = m.id;
+    markerChanged(m, { table: true, editor: true });
+    refocusMarker(m.id);
+  }
+}
+function refocusMarker(id) { const g = $(`.marker[data-id="${id}"]`); if (g) g.focus({ preventScroll: true }); }
+function initBodyMap() {
+  renderIntensityChips();
+  $$('.figure svg').forEach(svg => {
+    const view = svg.closest('.figure').dataset.view;
+    svg.addEventListener('pointerdown', e => onFigDown(e, svg));
+    svg.addEventListener('pointermove', e => onFigMove(e, svg));
+    svg.addEventListener('pointerup', e => onFigUp(e, svg, view));
+    svg.addEventListener('pointercancel', () => { bm.down = null; bm.drag = null; renderMarkers(); });
+    svg.addEventListener('touchmove', e => { if (bm.drag) e.preventDefault(); }, { passive: false });
+    svg.addEventListener('keydown', onMarkerKey);
+  });
+  $('#bm-codes').addEventListener('click', e => {
+    const b = e.target.closest('[data-code]');
+    if (!b) return;
+    bm.code = b.dataset.code;
+    updateCodeButtons();
+  });
+  const ed = $('#bm-editor');
+  ed.addEventListener('input', e => {
+    const m = findMarker(bm.selected);
+    if (!m) return;
+    if (e.target.id === 'bm-ed-area') { m.area = e.target.value; m.areaAuto = false; markerChanged(m); syncRow(m); }
+    if (e.target.id === 'bm-ed-note') { m.note = e.target.value; markerChanged(m); syncRow(m); }
+  });
+  ed.addEventListener('change', e => {
+    const m = findMarker(bm.selected);
+    if (!m) return;
+    if (e.target.name === 'bm-ed-code') { m.code = e.target.value; markerChanged(m, { table: true }); }
+    if (e.target.name === 'bm-ed-int') { m.intensity = e.target.value; markerChanged(m); syncRow(m); }
+  });
+  $('#bm-ed-done').addEventListener('click', () => selectMarker(null));
+  $('#bm-ed-delete').addEventListener('click', () => { if (bm.selected) deleteMarker(bm.selected); });
+  $('#bm-rows').addEventListener('input', e => {
+    const f = e.target.dataset && e.target.dataset.mkField;
+    if (!f) return;
+    const m = findMarker(e.target.closest('tr').dataset.mk);
+    if (!m) return;
+    let v = e.target.value;
+    if (f === 'intensity') { v = v.replace(/\D/g, ''); if (v !== '' && +v > 10) v = '10'; e.target.value = v; }
+    m[f] = v;
+    if (f === 'area') m.areaAuto = false;
+    markerChanged(m, { editor: true });
+  });
+  $('#bm-rows').addEventListener('click', e => {
+    const b = e.target.closest('[data-select]');
+    if (b) { selectMarker(b.dataset.select); $('#bm-editor').scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'nearest' }); }
+  });
+  $('#bm-add-row').addEventListener('click', () => {
+    state.assessment.bodyMap.manualRows.push({ area: '', code: '', intensity: '', notes: '' });
+    renderFindingRows();
+    markDirty();
+    const i = state.assessment.bodyMap.manualRows.length - 1;
+    const f = document.getElementById(`bm-row-${i}-area`); if (f) f.focus();
+  });
+  updateCodeButtons();
+}
+function syncRow(m) {
+  const set = (k, v) => { const el = document.getElementById(`bm-mk-${m.id}-${k}`); if (el && el !== document.activeElement) el.value = v; };
+  set('area', m.area || ''); set('intensity', m.intensity == null ? '' : m.intensity); set('note', m.note || '');
+}
+
+function renderTiles() {
+  $('#ci-grid').innerHTML = TILES.map(t => {
+    const rec = state.contraindications.forms[t.form];
+    const signed = !!(rec && rec.signature);
+    const flagged = signed && rec.items && rec.items.length > 0;
+    return `
+    <article class="ci-tile${flagged ? ' flagged' : ''}" id="ci-tile-${t.id}" data-tile="${t.id}">
+      <div class="ci-top"><h3 class="ci-name">${esc(t.label)}</h3>${flagged ? `<span class="flag" id="ci-review-${t.id}">Review</span>` : ''}</div>
+      <div class="ci-actions">
+        <button type="button" class="btn btn-teal btn-small" id="ci-open-${t.id}" data-open="${t.id}" aria-label="Open ${esc(t.label)} form">Open form</button>
+        <span class="status${signed ? ' signed' : ''}" id="ci-status-${t.id}"><span class="status-box" aria-hidden="true"></span><span>${signed ? '' : '<span class="sr-only">Not </span>'}Signed${signed ? ` <span class="status-date">${esc(fmtDate(rec.date || rec.signedAt))}</span>` : ''}</span></span>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+/* =====================================================================
+   BINDING: inputs write to state; applyState writes state back to inputs
+   ===================================================================== */
+function readHost(host, target) {
+  if (host === target) return target.type === 'checkbox' ? target.checked : target.value;
+  if (host.dataset.kind === 'multi') return $$('input[type="checkbox"]', host).filter(i => i.checked).map(i => i.value);
+  if (host.dataset.kind === 'single') { const c = $('input[type="radio"]:checked', host); return c ? c.value : ''; }
+  return undefined;
+}
+function onFieldEvent(e) {
+  const t = e.target;
+  if (!(t instanceof HTMLElement) || t.closest('#ci-sheet')) return;
+  const host = t.closest('[data-bind]');
+  if (!host || host.classList.contains('sig')) return;
+  const val = readHost(host, t);
+  if (val === undefined) return;
+  setPath(state, host.dataset.bind, val);
+  afterChange(host.dataset.bind, t.id);
+}
+function applyState() {
+  $$('[data-bind]').forEach(host => {
+    if (host.closest('#ci-sheet')) return;
+    const v = getPath(state, host.dataset.bind);
+    if (host.classList.contains('sig')) { const pad = pads.get(host); if (pad) pad.fromDataURL(v || ''); return; }
+    if (host.matches('input[type="checkbox"]')) host.checked = !!v;
+    else if (host.matches('input, textarea, select')) host.value = v == null ? '' : v;
+    else if (host.dataset.kind === 'multi') $$('input[type="checkbox"]', host).forEach(i => { i.checked = Array.isArray(v) && v.includes(i.value); });
+    else if (host.dataset.kind === 'single') $$('input[type="radio"]', host).forEach(i => { i.checked = String(v) === i.value; });
+  });
+  renderTiles();
+  renderMarkers();
+  updateRedFlags();
+  updateJourney();
+}
+function afterChange(path, changedId) {
+  if (path.startsWith('assessment.redFlags')) updateRedFlags(changedId);
+  const sm = path.match(/^assessment\.sessions\.(\d+)\./);
+  if (sm) updateSessionSummary(+sm[1]);
+  markDirty();
+  updateJourney();
+  refreshMessages();
+}
+function markDirty() { dirty = true; }
+
+/* =====================================================================
+   RED FLAGS: either red flag blocks the rest of section 3
+   ===================================================================== */
+function updateRedFlags(changedId) {
+  const rf = state.assessment.redFlags;
+  if (changedId === 'rf-none' && rf.noneSafe) { rf.calfSwelling = false; rf.chestPain = false; }
+  if ((changedId === 'rf-calf' && rf.calfSwelling) || (changedId === 'rf-chest' && rf.chestPain)) rf.noneSafe = false;
+  $('#rf-calf').checked = rf.calfSwelling;
+  $('#rf-chest').checked = rf.chestPain;
+  $('#rf-none').checked = rf.noneSafe;
+  const flag = rf.calfSwelling || rf.chestPain;
+  $('#rf-alert').classList.toggle('active', flag);
+  const rest = $('#assessment-rest');
+  rest.classList.toggle('blocked', flag);
+  rest.inert = flag;
+  if (flag) rest.setAttribute('aria-disabled', 'true'); else rest.removeAttribute('aria-disabled');
+}
+const redFlagPresent = () => state.assessment.redFlags.calfSwelling || state.assessment.redFlags.chestPain;
+
+/* =====================================================================
+   REQUIRED FIELDS, JOURNEY STATUS AND INLINE MESSAGES
+   ===================================================================== */
+const field = id => { const el = document.getElementById(id); return el ? (el.closest('.field') || el) : null; };
+function problems(part) {
+  const s = state, out = [];
+  const need = (path, id, msg) => { if (!filled(getPath(s, path))) out.push({ el: field(id), msg }); };
+  if (part === 'registration') {
+    need('registration.clientName', 'reg-client-name', 'Please enter the client name.');
+    need('registration.clientId', 'reg-client-id', 'Please enter the client ID or file number.');
+    need('registration.registrationDate', 'reg-date', 'Please choose the registration date.');
+    need('registration.dateOfBirth', 'reg-dob', 'Please choose the date of birth.');
+    need('registration.gender', 'reg-gender', 'Please choose one.');
+  }
+  if (part === 'contraindications') {
+    const any = Object.values(s.contraindications.forms).some(f => f && f.signature);
+    if (!any) out.push({ el: $('#ci-tiles-field'), msg: 'Please have the client sign at least one form.' });
+  }
+  if (part === 'assessment') {
+    const rf = s.assessment.redFlags;
+    if (!rf.calfSwelling && !rf.chestPain && !rf.noneSafe) out.push({ el: $('#rf-group'), msg: 'Please complete the red flag screening.' });
+    if (!redFlagPresent()) {
+      const c = s.assessment.consent;
+      if (!(c.explained && c.questions && c.informed)) out.push({ el: $('#cs-group'), msg: 'Please tick all three.' });
+      if (!filled(c.clientSignature)) out.push({ el: $('#cs-client-sig-field'), msg: 'Please sign here.' });
+      if (!filled(c.rsSignature)) out.push({ el: $('#cs-rs-sig-field'), msg: 'Please sign here.' });
+      need('assessment.consent.date', 'cs-date', 'Please choose the date.');
+      const i = s.assessment.sessions.length - 1;
+      need(`assessment.sessions.${i}.handover.focus`, `sn-${i}-focus`, 'Please add the focus areas for the next session.');
+      need(`assessment.sessions.${i}.handover.precautions`, `sn-${i}-precautions`, 'Please add the precautions.');
+    }
+  }
+  if (part === 'recoveryPlan') {
+    need('recoveryPlan.focus', 'rp-focus', 'Please add the plan focus.');
+    const anySvc = Object.values(s.recoveryPlan.services).some(v => v.selected);
+    if (!anySvc) out.push({ el: $('#rp-services-field'), msg: 'Please choose at least one service.' });
+    need('recoveryPlan.recommendedBy', 'rp-by', 'Please add who recommended the plan.');
+  }
+  return out.filter(p => p.el);
+}
+function isComplete(part) {
+  if (part === 'assessment' && redFlagPresent()) return false;
+  return problems(part).length === 0;
+}
+function updateJourney() {
+  PARTS.forEach(p => {
+    const done = isComplete(p);
+    const step = document.getElementById(`step-${p}`);
+    step.classList.toggle('done', done);
+    document.getElementById(`step-${p}-state`).textContent = done ? 'complete' : 'not complete';
+  });
+}
+const shownParts = new Set();
+function clearMessages(part) {
+  const sec = document.getElementById(`part-${part}`);
+  $$('.msg', sec).forEach(m => m.remove());
+  $$('.invalid', sec).forEach(f => f.classList.remove('invalid'));
+}
+function showMessages(part) {
+  clearMessages(part);
+  const list = problems(part);
+  list.forEach(({ el, msg }) => {
+    el.classList.add('invalid');
+    const m = document.createElement('p');
+    m.className = 'msg';
+    m.textContent = msg;
+    el.appendChild(m);
+  });
+  if (list.length) shownParts.add(part); else shownParts.delete(part);
+  return list;
+}
+function refreshMessages() { shownParts.forEach(p => showMessages(p)); }
+
+/* =====================================================================
+   SIGNATURE PAD (finger or Apple Pencil)
+   ===================================================================== */
+class SignaturePad {
+  constructor(host, onChange) {
+    this.host = host;
+    this.canvas = $('canvas', host);
+    this.ctx = this.canvas.getContext('2d');
+    this.clearBtn = $('.sig-clear', host);
+    this.onChange = onChange || (() => {});
+    this.strokes = [];
+    this.image = null;
+    this.drawing = false;
+    this.w = 0; this.h = 0;
+    const c = this.canvas;
+    c.addEventListener('pointerdown', e => this.down(e));
+    c.addEventListener('pointermove', e => this.move(e));
+    ['pointerup', 'pointercancel'].forEach(t => c.addEventListener(t, e => this.up(e)));
+    c.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+    if (this.clearBtn) this.clearBtn.addEventListener('click', () => { this.clear(); this.onChange(''); });
+    if ('ResizeObserver' in window) new ResizeObserver(() => this.resize()).observe(host);
+    else window.addEventListener('resize', () => this.resize());
+    this.resize();
+  }
+  resize() {
+    const r = this.host.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    this.w = r.width; this.h = r.height;
+    this.canvas.width = Math.round(r.width * dpr);
+    this.canvas.height = Math.round(r.height * dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.redraw();
+  }
+  pt(e) {
+    const r = this.canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, p: e.pointerType === 'pen' ? (e.pressure || 0.5) : 0.5 };
+  }
+  style(p) {
+    const ctx = this.ctx;
+    ctx.strokeStyle = '#000'; ctx.fillStyle = '#000';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = 1.6 + 2.2 * (p == null ? 0.5 : p);
+  }
+  seg(s, i) {
+    const ctx = this.ctx, W = this.w, H = this.h;
+    if (i === 0) { this.style(s[0].p); ctx.beginPath(); ctx.arc(s[0].x * W, s[0].y * H, ctx.lineWidth / 2, 0, Math.PI * 2); ctx.fill(); return; }
+    const a = s[Math.max(0, i - 2)], b = s[i - 1], c = s[i];
+    const m0 = i === 1 ? b : { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const m1 = { x: (b.x + c.x) / 2, y: (b.y + c.y) / 2 };
+    this.style(c.p);
+    ctx.beginPath();
+    ctx.moveTo(m0.x * W, m0.y * H);
+    ctx.quadraticCurveTo(b.x * W, b.y * H, m1.x * W, m1.y * H);
+    ctx.stroke();
+  }
+  redraw() {
+    if (!this.w) return;
+    this.ctx.clearRect(0, 0, this.w, this.h);
+    if (this.image) this.ctx.drawImage(this.image, 0, 0, this.w, this.h);
+    this.strokes.forEach(s => { for (let i = 0; i < s.length; i++) this.seg(s, i); });
+    this.updateClear();
+  }
+  down(e) {
+    if (e.button > 0) return;
+    e.preventDefault();
+    try { this.canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    this.drawing = true;
+    this.current = [this.pt(e)];
+    this.strokes.push(this.current);
+    this.seg(this.current, 0);
+  }
+  move(e) {
+    if (!this.drawing) return;
+    e.preventDefault();
+    const evs = typeof e.getCoalescedEvents === 'function' ? e.getCoalescedEvents() : [e];
+    (evs.length ? evs : [e]).forEach(ev => { this.current.push(this.pt(ev)); this.seg(this.current, this.current.length - 1); });
+  }
+  up() {
+    if (!this.drawing) return;
+    this.drawing = false;
+    this.current = null;
+    this.updateClear();
+    this.onChange(this.toDataURL());
+  }
+  isEmpty() { return !this.image && this.strokes.length === 0; }
+  clear() { this.strokes = []; this.image = null; this.redraw(); }
+  updateClear() { if (this.clearBtn) this.clearBtn.hidden = this.isEmpty(); }
+  toDataURL() {
+    if (this.isEmpty()) return '';
+    const scale = 2, out = document.createElement('canvas');
+    out.width = Math.round(this.w * scale); out.height = Math.round(this.h * scale);
+    const o = out.getContext('2d');
+    if (this.image) o.drawImage(this.image, 0, 0, out.width, out.height);
+    o.setTransform(scale, 0, 0, scale, 0, 0);
+    const keep = this.ctx; this.ctx = o;
+    this.strokes.forEach(s => { for (let i = 0; i < s.length; i++) this.seg(s, i); });
+    this.ctx = keep;
+    return out.toDataURL('image/png');
+  }
+  fromDataURL(url) {
+    this.strokes = [];
+    if (!url) { this.image = null; this.redraw(); return; }
+    const img = new Image();
+    img.onload = () => { this.image = img; this.redraw(); };
+    img.src = url;
+  }
+}
+const pads = new Map();
+function initPads() {
+  $$('.sig[data-bind]').forEach(host => {
+    const pad = new SignaturePad(host, url => { setPath(state, host.dataset.bind, url); afterChange(host.dataset.bind, host.id); });
+    pads.set(host, pad);
+  });
+}
+
+/* =====================================================================
+   CONTRAINDICATION SHEET
+   ===================================================================== */
+const sheet = { el: null, doc: null, tileId: null, formKey: null, lang: 'en', draft: null, pad: null, returnTo: null, shown: false };
+
+function emptyRecord(formKey) {
+  return { form: formKey, items: [], medication: { answer: '', details: '' }, name: state.registration.clientName || '', date: todayISO(), signature: '', signedAt: '', language: 'en' };
+}
+function buildSheet(formKey) {
+  const f = FORMS[formKey];
+  $('#ci-groups').innerHTML = f.groups.map((g, gi) => `
+    <fieldset class="ci-group field" id="ci-group-${gi}">
+      <legend class="ci-head" data-group="${gi}"></legend>
+      <div class="ci-list">${g.items.map((it, ii) => `
+        <label class="check"><input type="checkbox" id="ci-item-${gi}-${ii}" data-key="${formKey}.${gi}.${ii}"><span data-item="${gi}.${ii}"></span></label>`).join('')}
+      </div>
+    </fieldset>`).join('');
+  $('#ci-intro').innerHTML = COMMON.intro.en.map((_, i) => `<p class="${i === 0 ? 'greet' : ''}" data-intro="${i}"></p>`).join('');
+}
+function applySheetLang(lang) {
+  sheet.lang = lang;
+  const f = FORMS[sheet.formKey], u = UI[lang], doc = sheet.doc;
+  doc.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  doc.setAttribute('lang', lang);
+  $$('[data-intro]', doc).forEach(p => { p.textContent = COMMON.intro[lang][+p.dataset.intro]; });
+  $$('[data-group]', doc).forEach(h => { h.textContent = f.groups[+h.dataset.group].title[lang]; });
+  $$('[data-item]', doc).forEach(s => { const [gi, ii] = s.dataset.item.split('.').map(Number); s.textContent = f.groups[gi].items[ii][lang === 'ar' ? 1 : 0]; });
+  $('#ci-med-q').textContent = u.medQ;
+  $('#ci-med-yes-label').textContent = u.yes;
+  $('#ci-med-no-label').textContent = u.no;
+  $('#ci-med-details-label').textContent = u.specify;
+  $('#ci-decl').innerHTML = COMMON.declaration[lang];
+  $('#ci-name-label').textContent = u.name;
+  $('#ci-date-label').textContent = u.date;
+  $('#ci-sig-label').textContent = u.signature;
+  $('#ci-sig-clear').textContent = u.clear;
+  $('#ci-back-bottom').textContent = u.back;
+  $('#ci-submit').textContent = u.submit;
+  $('#ci-lang-en').setAttribute('aria-pressed', String(lang === 'en'));
+  $('#ci-lang-ar').setAttribute('aria-pressed', String(lang === 'ar'));
+  if (sheet.shownMessages) sheetValidate(true);
+}
+function fillSheet() {
+  const d = sheet.draft;
+  $$('#ci-groups input[type="checkbox"]').forEach(i => { i.checked = d.items.some(x => x.key === i.dataset.key); });
+  $('#ci-med-yes').checked = d.medication.answer === 'yes';
+  $('#ci-med-no').checked = d.medication.answer === 'no';
+  $('#ci-med-details').value = d.medication.details || '';
+  $('#ci-med-details-field').hidden = d.medication.answer !== 'yes';
+  $('#ci-name').value = d.name || '';
+  $('#ci-date').value = d.date || '';
+  sheet.pad.fromDataURL(d.signature || '');
+}
+function openSheet(tileId) {
+  const tile = TILES.find(t => t.id === tileId);
+  if (!tile) return;
+  sheet.tileId = tileId;
+  sheet.formKey = tile.form;
+  const existing = state.contraindications.forms[tile.form];
+  sheet.draft = existing ? clone(existing) : emptyRecord(tile.form);
+  if (!sheet.draft.name) sheet.draft.name = state.registration.clientName || '';
+  sheet.shownMessages = false;
+  buildSheet(tile.form);
+  $('#ci-sheet-title').textContent = FORMS[tile.form].bar;
+  sheet.returnTo = document.getElementById(`ci-open-${tileId}`);
+  sheet.el.hidden = false;
+  sheet.shown = true;
+  document.documentElement.classList.add('sheet-open');
+  sheet.el.scrollTop = 0;
+  applySheetLang(existing && existing.language ? existing.language : 'en');
+  clearSheetMessages();
+  sheet.pad.resize();
+  fillSheet();
+  setBackgroundInert(true);
+  $('#ci-sheet-title').focus({ preventScroll: true });
+}
+function setBackgroundInert(on) {
+  ['.top', '#journey', '#app', '.foot'].forEach(sel => { const el = $(sel); if (el) el.inert = on; });
+}
+function closeSheet() {
+  sheet.el.hidden = true;
+  sheet.shown = false;
+  document.documentElement.classList.remove('sheet-open');
+  setBackgroundInert(false);
+  const back = sheet.returnTo && document.getElementById(sheet.returnTo.id);
+  if (back) back.focus({ preventScroll: false });
+}
+function readSheetDraft() {
+  const d = sheet.draft, f = FORMS[sheet.formKey];
+  d.items = $$('#ci-groups input[type="checkbox"]').filter(i => i.checked).map(i => {
+    const [, gi, ii] = i.dataset.key.split('.').map((v, n) => (n ? Number(v) : v));
+    return { key: i.dataset.key, en: f.groups[gi].items[ii][0] };
+  });
+  const med = $('input[name="ci-med"]:checked');
+  d.medication.answer = med ? med.value : '';
+  d.medication.details = d.medication.answer === 'yes' ? $('#ci-med-details').value : '';
+  d.name = $('#ci-name').value;
+  d.date = $('#ci-date').value;
+}
+function clearSheetMessages() {
+  $$('.msg', sheet.doc).forEach(m => m.remove());
+  $$('.invalid', sheet.doc).forEach(f => f.classList.remove('invalid'));
+}
+function sheetValidate(show) {
+  readSheetDraft();
+  const u = UI[sheet.lang], d = sheet.draft, out = [];
+  if (!d.medication.answer) out.push(['#ci-med-field', u.msgMed]);
+  if (d.medication.answer === 'yes' && !filled(d.medication.details)) out.push(['#ci-med-details-field', u.msgSpecify]);
+  if (!filled(d.name)) out.push(['#ci-name-field', u.msgName]);
+  if (!filled(d.date)) out.push(['#ci-date-field', u.msgDate]);
+  if (sheet.pad.isEmpty()) out.push(['#ci-sig-field', u.msgSign]);
+  if (show) {
+    clearSheetMessages();
+    out.forEach(([sel, msg]) => {
+      const el = $(sel, sheet.doc);
+      el.classList.add('invalid');
+      const m = document.createElement('p'); m.className = 'msg'; m.textContent = msg; el.appendChild(m);
+    });
+  }
+  return out;
+}
+function submitSheet(e) {
+  e.preventDefault();
+  const issues = sheetValidate(true);
+  sheet.shownMessages = true;
+  if (issues.length) {
+    const first = $(issues[0][0], sheet.doc);
+    first.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' });
+    return;
+  }
+  const d = sheet.draft;
+  d.signature = sheet.pad.toDataURL();
+  d.signedAt = new Date().toISOString();
+  d.language = sheet.lang;
+  state.contraindications.forms[sheet.formKey] = clone(d);
+  markDirty();
+  renderTiles();
+  updateJourney();
+  refreshMessages();
+  const name = FORMS[sheet.formKey].name;
+  closeSheet();
+  toast(`${name} form signed`);
+  submitSection('contraindications', { form: sheet.formKey });
+}
+function initSheet() {
+  sheet.el = $('#ci-sheet');
+  sheet.doc = $('#ci-doc');
+  sheet.pad = new SignaturePad($('#ci-sig'), () => { if (sheet.shownMessages) sheetValidate(true); });
+  $('#ci-back-top').addEventListener('click', closeSheet);
+  $('#ci-back-bottom').addEventListener('click', closeSheet);
+  $('#ci-lang-en').addEventListener('click', () => applySheetLang('en'));
+  $('#ci-lang-ar').addEventListener('click', () => applySheetLang('ar'));
+  sheet.doc.addEventListener('submit', submitSheet);
+  sheet.doc.addEventListener('change', e => {
+    if (e.target.name === 'ci-med') $('#ci-med-details-field').hidden = e.target.value !== 'yes';
+    if (sheet.shownMessages) sheetValidate(true);
+  });
+  sheet.doc.addEventListener('input', () => { if (sheet.shownMessages) sheetValidate(true); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheet.shown) closeSheet(); });
+  $('#ci-grid').addEventListener('click', e => {
+    const b = e.target.closest('[data-open]');
+    if (b) openSheet(b.dataset.open);
+  });
+}
+
+/* =====================================================================
+   CLIENT JOURNEY BAR
+   ===================================================================== */
+function initJourney() {
+  const bar = $('#journey');
+  const setH = () => document.documentElement.style.setProperty('--journey-h', `${Math.round(bar.getBoundingClientRect().height)}px`);
+  setH();
+  if ('ResizeObserver' in window) new ResizeObserver(setH).observe(bar);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([en]) => bar.classList.toggle('stuck', !en.isIntersecting), { threshold: 0 }).observe($('#journey-sentinel'));
+  }
+  $$('.step', bar).forEach(b => b.addEventListener('click', () => {
+    const sec = document.getElementById(`part-${b.dataset.part}`);
+    sec.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+    const h = $('h2', sec);
+    if (h) h.focus({ preventScroll: true });
+  }));
+  let ticking = false;
+  const current = () => {
+    ticking = false;
+    const limit = bar.getBoundingClientRect().bottom + 60;
+    let cur = PARTS[0];
+    PARTS.forEach(p => { if (document.getElementById(`part-${p}`).getBoundingClientRect().top <= limit) cur = p; });
+    PARTS.forEach(p => {
+      const s = document.getElementById(`step-${p}`);
+      if (p === cur) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current');
+    });
+  };
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(current); } }, { passive: true });
+  current();
+}
+
+/* =====================================================================
+   TOAST
+   ===================================================================== */
+let toastTimer = null;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* =====================================================================
+   CRM HOOKS
+   The prototype keeps data in this device's local storage so it works on
+   its own. To connect the CRM, replace the bodies marked "CRM:" below.
+   Nothing else in the file needs to change.
+   Never put CRM passwords or tokens in this file. Run it on the CRM's own
+   web address so it uses the staff member's normal CRM login.
+   ===================================================================== */
+const draftKey = () => `${STORAGE_PREFIX}draft`;
+const clientKey = id => `${STORAGE_PREFIX}client:${id}`;
+
+/* Fills Registration from a CRM client record. Field names below are the ones
+   seen in the reSTART CRM client export; IT to confirm.
+     clientName <- name, clientId <- _id (or the file number), registrationDate <- created,
+     dateOfBirth <- dob, gender <- sex, preferredRS <- therapistId (look up the name). */
+function prefill(data) {
+  if (!data) return;
+  const next = clone(state);
+  Object.keys(data).forEach(k => { if (k !== 'registration') next[k] = data[k]; });
+  next.registration = { ...state.registration, ...(data.registration || {}) };
+  ['registrationDate', 'dateOfBirth'].forEach(k => { if (next.registration[k]) next.registration[k] = String(next.registration[k]).slice(0, 10); });
+  if (next.registration.gender) next.registration.gender = String(next.registration.gender).toLowerCase();
+  state = mergeState(next);
+  rerenderAll();
+}
+
+// CRM: load the client by ID: Registration fields plus any earlier sessions.
+// Example once connected:
+//   const res = await fetch(`/api/assessments/${encodeURIComponent(clientId)}`, { credentials: 'include' });
+//   const record = res.ok ? await res.json() : null;          // the saved state object, if any
+//   const client = await (await fetch(`/customers/details/${clientId}`, { credentials: 'include' })).json();
+//   state = record ? mergeState(record) : emptyState();
+//   prefill({ registration: { clientName: client.name, clientId: client._id, registrationDate: client.created, dateOfBirth: client.dob, gender: client.sex } });
+async function loadClient(clientId) {
+  const saved = clientId ? store.get(clientKey(clientId)) : null;
+  state = saved ? mergeState(JSON.parse(saved)) : emptyState();
+  if (clientId) state.registration.clientId = state.registration.clientId || String(clientId);
+  rerenderAll();
+  return state;
+}
+
+// CRM: save the whole state object as a draft. Runs every AUTOSAVE_MS and when a field loses focus.
+// Example once connected:
+//   await fetch(`/api/assessments/${encodeURIComponent(state.registration.clientId)}/draft`, {
+//     method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state) });
+async function saveDraft() {
+  if (!dirty) return false;
+  state.meta.updatedAt = new Date().toISOString();
+  const json = JSON.stringify(state);
+  store.set(draftKey(), json);
+  if (state.registration.clientId) store.set(clientKey(state.registration.clientId), json);
+  dirty = false;
+  return true;
+}
+
+// CRM: send one part when staff press Submit. sectionKey is registration, contraindications, assessment or recoveryPlan.
+// For contraindications, extra.form says which form was just signed (massage, cryotherapy, compression, infraredSauna, floatation).
+// Example once connected:
+//   await fetch(`/api/assessments/${encodeURIComponent(state.registration.clientId)}/${sectionKey}`, {
+//     method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sectionPayload(sectionKey)) });
+//   A signed contraindication form can also tick the client's existing "contraindicationsSigned" field in the CRM.
+async function submitSection(sectionKey, extra) {
+  state.meta.submitted[sectionKey] = new Date().toISOString();
+  markDirty();
+  await saveDraft();
+  return { ok: true, sectionKey, payload: sectionPayload(sectionKey), extra: extra || null };
+}
+function sectionPayload(sectionKey) {
+  return { clientId: state.registration.clientId, section: sectionKey, data: clone(state[sectionKey]), submittedAt: state.meta.submitted[sectionKey] };
+}
+
+/* Keeps saved records compatible when new fields are added later. */
+function mergeState(saved) {
+  const base = emptyState();
+  const merge = (a, b) => {
+    if (Array.isArray(a) || Array.isArray(b)) return b !== undefined ? b : a;
+    if (a && typeof a === 'object') {
+      const o = { ...a };
+      if (b && typeof b === 'object') Object.keys(b).forEach(k => { o[k] = merge(a[k], b[k]); });
+      return o;
+    }
+    return b !== undefined ? b : a;
+  };
+  return merge(base, saved);
+}
+
+function onSubmitClick(e) {
+  const b = e.target.closest('[data-submit]');
+  if (!b) return;
+  const part = b.dataset.submit;
+  if (part === 'assessment') ensureLatestSessionOpen();
+  const list = showMessages(part);
+  if (list.length) {
+    list[0].el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' });
+    toast('Please complete the highlighted fields');
+    return;
+  }
+  submitSection(part).then(() => toast(part === 'assessment' && redFlagPresent() ? 'Red flag recorded' : `${PART_NAMES[part]} submitted`));
+}
+
+/* Two taps clear the form, because browser confirm dialogs are not available everywhere. */
+let resetArmed = null;
+function onNewAssessment(e) {
+  const b = e.currentTarget;
+  if (!resetArmed) {
+    b.textContent = 'Tap again to clear';
+    resetArmed = setTimeout(() => { b.textContent = 'New assessment'; resetArmed = null; }, 3500);
+    return;
+  }
+  clearTimeout(resetArmed); resetArmed = null;
+  b.textContent = 'New assessment';
+  store.remove(draftKey());
+  state = emptyState();
+  dirty = false;
+  shownParts.clear();
+  PARTS.forEach(clearMessages);
+  rerenderAll();
+  window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
+  toast('New assessment started');
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+function rerenderAll() {
+  openSessions.clear();
+  bm.selected = null;
+  if ($('#bm-editor')) $('#bm-editor').hidden = true;
+  renderSessions();
+  renderFindingRows();
+  applyState();
+}
+function init() {
+  renderDatalist();
+  renderPainTiles();
+  renderServices();
+  renderFigures();
+  renderTiles();
+  renderSessions();
+  renderFindingRows();
+  initPads();
+  initSheet();
+  initJourney();
+  initBodyMap();
+  $('#sn-add').addEventListener('click', addSession);
+  $('#sessions').addEventListener('click', e => { const t = e.target.closest('[data-session-toggle]'); if (t) toggleSession(t.dataset.sessionToggle); });
+  document.addEventListener('input', onFieldEvent);
+  document.addEventListener('change', onFieldEvent);
+  document.addEventListener('click', onSubmitClick);
+  document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('[data-bind]')) saveDraft(); });
+  $('#new-assessment').addEventListener('click', onNewAssessment);
+  setInterval(saveDraft, AUTOSAVE_MS);
+  window.addEventListener('pagehide', () => { saveDraft(); });
+
+  const params = new URLSearchParams(window.location.search);
+  const hashId = (window.location.hash.match(/^#client-([A-Za-z0-9._~-]+)$/) || [])[1];
+  const clientId = params.get('client') || hashId;
+  if (clientId) { loadClient(clientId); return; }
+  const draft = store.get(draftKey());
+  if (draft) { try { state = mergeState(JSON.parse(draft)); } catch (e) { state = emptyState(); } }
+  rerenderAll();
+}
+
+/* Public surface for the CRM integration. */
+window.RestartAssessment = {
+  get state() { return state; },
+  loadClient, saveDraft, submitSection, prefill, applyState: () => rerenderAll(),
+  setState(next) { state = mergeState(next); rerenderAll(); }
+};
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+</script>
+<!--
+README FOR IT: reSTART Initial Assessment (iPad web app)
+=========================================================
+
+WHAT THIS IS
+One self contained file: HTML, CSS and plain JavaScript, no build step.
+Only external dependency: Google Fonts (Nunito Sans, Noto Sans Arabic).
+Works on iPad (portrait 820 to 1024 px, landscape too) and on phones.
+
+HOW TO RUN IT
+Serve index.html from any web server. For real client data, serve it from the
+CRM's own web address so it can call the CRM with the staff member's normal login
+(cookies, credentials: 'include'). Do not put passwords or tokens in this file.
+Open a client directly with index.html?client=<clientId>.
+
+DATA AND PRIVACY
+Contraindications, signatures and session notes are health information.
+In this prototype everything is saved in the browser's localStorage on the device
+(keys starting "restart-ia:"). Replace the three CRM hooks before real use so the
+record lives in the CRM, then remove the localStorage lines in saveDraft/loadClient.
+
+CRM HOOKS (search the file for "// CRM:")
+  loadClient(clientId)          Load the client: Registration fields and earlier sessions.
+  saveDraft()                   Save the whole state object. Runs every 5 s (AUTOSAVE_MS) and on blur.
+  submitSection(sectionKey,x)   Called by each Submit button. sectionKey = registration |
+                                contraindications | assessment | recoveryPlan.
+                                For contraindications, x.form = massage | cryotherapy |
+                                compression | infraredSauna | floatation.
+  sectionPayload(sectionKey)    Builds { clientId, section, data, submittedAt } for one part.
+  prefill(data)                 Merges CRM values into the form, e.g.
+                                prefill({ registration: { clientName, clientId, registrationDate,
+                                dateOfBirth, gender, preferredRS } }).
+                                Suggested CRM mapping (from the CRM client export, to confirm):
+                                name, _id, created, dob, sex, therapistId.
+                                Profiles also have "contraindicationsSigned": tick it when a form is signed.
+Public object for the integration: window.RestartAssessment
+  .state (read), .setState(obj), .prefill(obj), .loadClient(id), .saveDraft(), .submitSection(key)
+
+STATE SHAPE (one object holds everything)
+state = {
+  meta: { version, updatedAt, submitted: { registration, contraindications, assessment, recoveryPlan } },
+  registration: { clientName, clientId, registrationDate, dateOfBirth, gender: 'male'|'female', preferredRS },
+  contraindications: {
+    additionalPrecautions,
+    forms: {                      // one record per form, null until signed
+      massage | cryotherapy | compression | infraredSauna | floatation: {
+        form, items: [{ key, en }],   // conditions the client ticked (key = form.group.item, en = English wording)
+        medication: { answer: 'yes'|'no', details },
+        name, date, signature,      // signature = PNG data URL
+        signedAt, language: 'en'|'ar'
+      }
+    }
+  },
+  assessment: {
+    redFlags: { calfSwelling, chestPain, noneSafe },            // either red flag blocks 3.2 to 3.5
+    profile: { occupation, sport, sessionsPerWeek, goals: [], onset, duration, mainAreas,
+               painLevel: '0'..'10', history, findings },
+    consent: { explained, questions, informed, clientSignature, rsSignature, date },
+    bodyMap: {
+      markers: [{ id, view: 'front'|'back', x, y,          // x, y = % of the figure box (viewBox -52 150 104 196)
+                   code: 'P'|'T'|'X'|'I', intensity: '0'..'10', note, area, areaAuto }],
+      manualRows: [{ area, code, intensity, notes }]
+    },
+    sessions: [{ id, date, number, rs, techniques: [], pressure, areasResponse,
+                  handover: { focus, precautions } }]       // newest last
+  },
+  recoveryPlan: {
+    focus, trainingPhase,
+    services: { sportsMassage | recoverySession | assistedStretching | cryotherapy | infraredSauna |
+                compressionTherapy | floatationTherapy | recoveryAssessment: { selected, frequency } },
+    home, option: 'singleSession'|'sessionPackage'|'membership', packageName,
+    nextAppointment, reassessmentDate, recommendedBy,
+    after: { toldToExpect, planShared, nextBooked, purchased }
+  }
+}
+
+REQUIRED FIELDS (inline messages on Submit; nothing else is blocked)
+  Registration: client name, client ID, registration date, date of birth, gender.
+  Contraindications: at least one form signed.
+  Assessment: red flag screening answered; if no red flag: 3 consent ticks, both signatures,
+              consent date, handover focus and precautions of the newest session.
+  Recovery Plan: plan focus, at least one service, recommended by.
+  Rules live in problems(part). The journey bar ticks a step when its rules pass.
+
+CONFIG AT THE TOP OF THE SCRIPT
+  RS_NAMES (suggestions for RS fields), TILES (tile to form mapping), FORMS (official wording,
+  English and Arabic), SERVICES, TECHNIQUES, PRESSURES, PAIN_COLORS, AUTOSAVE_MS.
+  Brand font: change --font in :root (Museo Sans when the files are available).
+
+FIELD IDS AND STATE PATHS
+  id                                 state path                                       type
+  reg-client-name                    registration.clientName                          text
+  reg-client-id                      registration.clientId                            text
+  reg-date                           registration.registrationDate                    date (YYYY-MM-DD)
+  reg-dob                            registration.dateOfBirth                         date (YYYY-MM-DD)
+  reg-gender                         registration.gender                              single choice  values: male, female
+  reg-preferred-rs                   registration.preferredRS                         text
+  ci-additional                      contraindications.additionalPrecautions          text
+  rf-calf                            assessment.redFlags.calfSwelling                 checkbox (true/false)
+  rf-chest                           assessment.redFlags.chestPain                    checkbox (true/false)
+  rf-none                            assessment.redFlags.noneSafe                     checkbox (true/false)
+  pr-occupation                      assessment.profile.occupation                    text
+  pr-sport                           assessment.profile.sport                         text
+  pr-sessions-week                   assessment.profile.sessionsPerWeek               text
+  pr-goals                           assessment.profile.goals                         checkbox group (array)  values: muscleRecovery, painRelief, mobilityFlexibility, injuryPrevention, performanceEventPrep, relaxationStress
+  pr-onset                           assessment.profile.onset                         single choice  values: sudden, gradual, afterInjury, afterEvent
+  pr-duration                        assessment.profile.duration                      text
+  pr-main-areas                      assessment.profile.mainAreas                     text
+  pr-pain                            assessment.profile.painLevel                     single choice  values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+  pr-history                         assessment.profile.history                       text, multiline
+  pr-findings                        assessment.profile.findings                      text, multiline
+  cs-explained                       assessment.consent.explained                     checkbox (true/false)
+  cs-questions                       assessment.consent.questions                     checkbox (true/false)
+  cs-informed                        assessment.consent.informed                      checkbox (true/false)
+  cs-client-sig                      assessment.consent.clientSignature               signature (PNG data URL)
+  cs-rs-sig                          assessment.consent.rsSignature                   signature (PNG data URL)
+  cs-date                            assessment.consent.date                          date (YYYY-MM-DD)
+  bm-row-{r}-area                    assessment.bodyMap.manualRows.{r}.area           text
+  bm-row-{r}-code                    assessment.bodyMap.manualRows.{r}.code           text
+  bm-row-{r}-intensity               assessment.bodyMap.manualRows.{r}.intensity      text
+  bm-row-{r}-notes                   assessment.bodyMap.manualRows.{r}.notes          text
+  sn-{i}-date                        assessment.sessions.{i}.date                     date (YYYY-MM-DD)
+  sn-{i}-number                      assessment.sessions.{i}.number                   text
+  sn-{i}-rs                          assessment.sessions.{i}.rs                       text
+  sn-{i}-techniques                  assessment.sessions.{i}.techniques               checkbox group (array)  values: deepTissue, triggerPoint, myofascialRelease, assistedStretching, flushLight, mobilityWork
+  sn-{i}-pressure                    assessment.sessions.{i}.pressure                 single choice  values: light, medium, firm, adjustedToTolerance
+  sn-{i}-areas                       assessment.sessions.{i}.areasResponse            text, multiline
+  sn-{i}-focus                       assessment.sessions.{i}.handover.focus           text, multiline
+  sn-{i}-precautions                 assessment.sessions.{i}.handover.precautions     text, multiline
+  rp-focus                           recoveryPlan.focus                               text
+  rp-phase                           recoveryPlan.trainingPhase                       text
+  rp-svc-sportsMassage               recoveryPlan.services.sportsMassage.selected     checkbox (true/false)
+  rp-freq-sportsMassage              recoveryPlan.services.sportsMassage.frequency    text
+  rp-svc-recoverySession             recoveryPlan.services.recoverySession.selected   checkbox (true/false)
+  rp-freq-recoverySession            recoveryPlan.services.recoverySession.frequency  text
+  rp-svc-assistedStretching          recoveryPlan.services.assistedStretching.selected checkbox (true/false)
+  rp-freq-assistedStretching         recoveryPlan.services.assistedStretching.frequency text
+  rp-svc-cryotherapy                 recoveryPlan.services.cryotherapy.selected       checkbox (true/false)
+  rp-freq-cryotherapy                recoveryPlan.services.cryotherapy.frequency      text
+  rp-svc-infraredSauna               recoveryPlan.services.infraredSauna.selected     checkbox (true/false)
+  rp-freq-infraredSauna              recoveryPlan.services.infraredSauna.frequency    text
+  rp-svc-compressionTherapy          recoveryPlan.services.compressionTherapy.selected checkbox (true/false)
+  rp-freq-compressionTherapy         recoveryPlan.services.compressionTherapy.frequency text
+  rp-svc-floatationTherapy           recoveryPlan.services.floatationTherapy.selected checkbox (true/false)
+  rp-freq-floatationTherapy          recoveryPlan.services.floatationTherapy.frequency text
+  rp-svc-recoveryAssessment          recoveryPlan.services.recoveryAssessment.selected checkbox (true/false)
+  rp-freq-recoveryAssessment         recoveryPlan.services.recoveryAssessment.frequency text
+  rp-home                            recoveryPlan.home                                text, multiline
+  rp-option                          recoveryPlan.option                              single choice  values: singleSession, sessionPackage, membership
+  rp-package-name                    recoveryPlan.packageName                         text
+  rp-next                            recoveryPlan.nextAppointment                     date (YYYY-MM-DD)
+  rp-reassess                        recoveryPlan.reassessmentDate                    date (YYYY-MM-DD)
+  rp-by                              recoveryPlan.recommendedBy                       text
+  rp-after-told                      recoveryPlan.after.toldToExpect                  checkbox (true/false)
+  rp-after-shared                    recoveryPlan.after.planShared                    checkbox (true/false)
+  rp-after-booked                    recoveryPlan.after.nextBooked                    checkbox (true/false)
+  rp-after-purchased                 recoveryPlan.after.purchased                     checkbox (true/false)
+  Contraindication sheet (rebuilt each time a form opens; saved to contraindications.forms[form] on Submit):
+  ci-item-{group}-{item}, ci-med-yes, ci-med-no, ci-med-details, ci-name, ci-date, ci-sig (signature), ci-submit,
+  ci-lang-en, ci-lang-ar. Tiles: ci-open-{tile}, ci-status-{tile}, ci-review-{tile}.
+  Body map: bm-svg-front, bm-svg-back, bm-code-P|T|X|I, editor bm-ed-area, bm-ed-code-*, bm-ed-int-0..10,
+  bm-ed-note, bm-ed-delete, bm-ed-done. Marker rows: bm-mk-{markerId}-area|intensity|note.
+  Submit buttons: submit-registration, submit-contraindications, submit-assessment, submit-recoveryPlan.
+  {i} = session index (0 = first), {r} = manual findings row index.
+
+-->
+</body>
+</html>

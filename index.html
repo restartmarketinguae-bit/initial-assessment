@@ -410,6 +410,27 @@ fieldset.field > legend.label{margin-bottom:6px}
   .mk-editor{padding:14px 12px 16px}
 }
 
+/* ---------- One part open at a time ---------- */
+.part:not(.open) > .part-panel{display:none}
+.part.open > .part-bar{display:none}
+.part:not(.open){margin-top:24px}
+.part:not(.open):first-child{margin-top:34px}
+.part.open + .part:not(.open){margin-top:40px}
+.part:not(.open) + .part.open{margin-top:56px}
+.part-bar{display:flex;align-items:center;gap:12px;width:calc(100% - var(--shadow));min-height:66px;margin:0;padding:12px 18px 12px 0;border:1px solid var(--line);border-radius:var(--radius-card);background:var(--white);box-shadow:var(--shadow) var(--shadow) 0 var(--yellow);text-align:left;color:var(--ink)}
+.part-bar:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.part-bar .tab{margin-left:-12px}
+.part-bar .role{border-color:transparent}
+.bar-end{display:flex;align-items:center;gap:14px;margin-left:auto}
+.bar-tick{width:20px;height:20px;border:2px solid var(--teal);border-radius:3px;background:var(--white)}
+.part-bar.done .bar-tick{background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4l3 3 6.6-6.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat}
+.bar-chev{width:11px;height:11px;border-right:2.5px solid var(--teal);border-bottom:2.5px solid var(--teal);transform:rotate(45deg);margin:0 6px 5px 2px}
+@media (max-width:600px){
+  .part-bar{flex-wrap:wrap;gap:8px 10px;padding:10px 14px 10px 0}
+  .part-bar .tab{margin-left:-9px}
+  .part-bar .role{order:3;margin-left:12px}
+}
+
 </style>
 </head>
 <body>
@@ -436,7 +457,9 @@ fieldset.field > legend.label{margin-bottom:6px}
 <main class="wrap" id="app">
 
   <!-- ===================== 01 REGISTRATION ===================== -->
-  <section class="part" id="part-registration" aria-labelledby="h-registration">
+  <section class="part" id="part-registration" data-part="registration" aria-labelledby="h-registration">
+    <button type="button" class="part-bar" id="bar-registration" data-open-part="registration" aria-expanded="false" aria-controls="panel-registration"></button>
+    <div class="part-panel" id="panel-registration">
     <div class="card part-card">
       <div class="part-head">
         <h2 class="tab" id="h-registration" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">01</span>Registration</span></h2>
@@ -462,10 +485,13 @@ fieldset.field > legend.label{margin-bottom:6px}
       </div>
       <div class="actions"><button type="button" class="btn btn-teal" id="submit-registration" data-submit="registration">Submit</button></div>
     </div>
+      </div>
   </section>
 
   <!-- ===================== 02 CONTRAINDICATIONS ===================== -->
-  <section class="part" id="part-contraindications" aria-labelledby="h-contraindications">
+  <section class="part" id="part-contraindications" data-part="contraindications" aria-labelledby="h-contraindications">
+    <button type="button" class="part-bar" id="bar-contraindications" data-open-part="contraindications" aria-expanded="false" aria-controls="panel-contraindications"></button>
+    <div class="part-panel" id="panel-contraindications">
     <div class="card part-card">
       <div class="part-head">
         <h2 class="tab" id="h-contraindications" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">02</span>Contraindications</span></h2>
@@ -479,10 +505,13 @@ fieldset.field > legend.label{margin-bottom:6px}
       </div>
       <div class="actions"><button type="button" class="btn btn-teal" id="submit-contraindications" data-submit="contraindications">Submit</button></div>
     </div>
+      </div>
   </section>
 
   <!-- ===================== 03 ASSESSMENT ===================== -->
-  <section class="part" id="part-assessment" aria-labelledby="h-assessment">
+  <section class="part" id="part-assessment" data-part="assessment" aria-labelledby="h-assessment">
+    <button type="button" class="part-bar" id="bar-assessment" data-open-part="assessment" aria-expanded="false" aria-controls="panel-assessment"></button>
+    <div class="part-panel" id="panel-assessment">
     <div class="part-head static">
       <h2 class="tab" id="h-assessment" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">03</span>Assessment</span></h2>
       <span class="role role-teal">Recovery Specialist</span>
@@ -618,10 +647,13 @@ fieldset.field > legend.label{margin-bottom:6px}
 
     </div>
     <div class="actions"><button type="button" class="btn btn-teal" id="submit-assessment" data-submit="assessment">Submit</button></div>
+      </div>
   </section>
 
   <!-- ===================== 04 RECOVERY PLAN ===================== -->
-  <section class="part" id="part-recoveryPlan" aria-labelledby="h-recoveryPlan">
+  <section class="part" id="part-recoveryPlan" data-part="recoveryPlan" aria-labelledby="h-recoveryPlan">
+    <button type="button" class="part-bar" id="bar-recoveryPlan" data-open-part="recoveryPlan" aria-expanded="false" aria-controls="panel-recoveryPlan"></button>
+    <div class="part-panel" id="panel-recoveryPlan">
     <div class="card part-card">
       <div class="part-head">
         <h2 class="tab" id="h-recoveryPlan" tabindex="-1"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">04</span>Recovery Plan</span></h2>
@@ -643,6 +675,7 @@ fieldset.field > legend.label{margin-bottom:6px}
               <label class="check"><input type="radio" name="rp-option" id="rp-option-single" value="singleSession"><span>Single session</span></label>
               <label class="check"><input type="radio" name="rp-option" id="rp-option-package" value="sessionPackage"><span>Session package</span></label>
               <label class="check"><input type="radio" name="rp-option" id="rp-option-membership" value="membership"><span>Membership</span></label>
+              <label class="check"><input type="radio" name="rp-option" id="rp-option-package-membership" value="packageMembership"><span>Package / membership</span></label>
             </div>
           </fieldset>
           <div class="field"><label class="label" for="rp-package-name">Package / membership name</label><input class="input" id="rp-package-name" data-bind="recoveryPlan.packageName" autocomplete="off"></div>
@@ -664,6 +697,7 @@ fieldset.field > legend.label{margin-bottom:6px}
       </div>
       <div class="actions"><button type="button" class="btn btn-teal" id="submit-recoveryPlan" data-submit="recoveryPlan">Submit</button></div>
     </div>
+      </div>
   </section>
 
   <div class="actions end-actions"><button type="button" class="btn btn-outline" id="new-assessment">New assessment</button></div>
@@ -740,6 +774,12 @@ const STORAGE_PREFIX = 'restart-ia:';
 const PAIN_COLORS = ['#2DA4AD', '#45ADA6', '#5FB69E', '#7FBF8F', '#A3C77C', '#C9CC63', '#ECCB3C', '#FDC317', '#F4A42A', '#E67E33', '#C8423B'];
 const PARTS = ['registration', 'contraindications', 'assessment', 'recoveryPlan'];
 const PART_NAMES = { registration: 'Registration', contraindications: 'Contraindications', assessment: 'Assessment', recoveryPlan: 'Recovery Plan' };
+const PART_META = {
+  registration: { no: '01', role: 'RS and Reception', roleClass: 'role-teal' },
+  contraindications: { no: '02', role: 'Client and Reception', roleClass: 'role-yellow' },
+  assessment: { no: '03', role: 'Recovery Specialist', roleClass: 'role-teal' },
+  recoveryPlan: { no: '04', role: 'RS and Reception', roleClass: 'role-yellow' }
+};
 
 /* Contraindication tiles. Two tiles share the massage form, so signing it once marks both. */
 const TILES = [
@@ -1536,6 +1576,8 @@ function updateJourney() {
     const step = document.getElementById(`step-${p}`);
     step.classList.toggle('done', done);
     document.getElementById(`step-${p}-state`).textContent = done ? 'complete' : 'not complete';
+    const bar = document.getElementById(`bar-${p}`);
+    if (bar) bar.classList.toggle('done', done);
   });
 }
 const shownParts = new Set();
@@ -1851,25 +1893,43 @@ function initJourney() {
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([en]) => bar.classList.toggle('stuck', !en.isIntersecting), { threshold: 0 }).observe($('#journey-sentinel'));
   }
-  $$('.step', bar).forEach(b => b.addEventListener('click', () => {
-    const sec = document.getElementById(`part-${b.dataset.part}`);
+  $$('.step', bar).forEach(b => b.addEventListener('click', () => openPart(b.dataset.part, true)));
+}
+
+/* =====================================================================
+   ONE PART OPEN AT A TIME
+   ===================================================================== */
+let openPartKey = null;
+function renderPartBars() {
+  PARTS.forEach(p => {
+    const m = PART_META[p];
+    document.getElementById(`bar-${p}`).innerHTML =
+      `<span class="tab"><span class="tab-cap" aria-hidden="true"></span><span class="tab-pill"><span class="tab-no">${m.no}</span>${esc(PART_NAMES[p])}</span></span>` +
+      `<span class="role ${m.roleClass}">${esc(m.role)}</span>` +
+      `<span class="bar-end"><span class="bar-tick" aria-hidden="true"></span><span class="bar-chev" aria-hidden="true"></span></span>`;
+  });
+}
+function openPart(part, scroll) {
+  if (!PARTS.includes(part)) part = PARTS[0];
+  openPartKey = part;
+  PARTS.forEach(p => {
+    const sec = document.getElementById(`part-${p}`);
+    const on = p === part;
+    sec.classList.toggle('open', on);
+    document.getElementById(`bar-${p}`).setAttribute('aria-expanded', String(on));
+    const step = document.getElementById(`step-${p}`);
+    if (on) step.setAttribute('aria-current', 'step'); else step.removeAttribute('aria-current');
+  });
+  if (scroll) {
+    const sec = document.getElementById(`part-${part}`);
     sec.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
     const h = $('h2', sec);
     if (h) h.focus({ preventScroll: true });
-  }));
-  let ticking = false;
-  const current = () => {
-    ticking = false;
-    const limit = bar.getBoundingClientRect().bottom + 60;
-    let cur = PARTS[0];
-    PARTS.forEach(p => { if (document.getElementById(`part-${p}`).getBoundingClientRect().top <= limit) cur = p; });
-    PARTS.forEach(p => {
-      const s = document.getElementById(`step-${p}`);
-      if (p === cur) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current');
-    });
-  };
-  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(current); } }, { passive: true });
-  current();
+  }
+}
+function firstOpenPart() {
+  const p = PARTS.find(x => !isComplete(x));
+  return p || PARTS[0];
 }
 
 /* =====================================================================
@@ -1981,7 +2041,12 @@ function onSubmitClick(e) {
     toast('Please complete the highlighted fields');
     return;
   }
-  submitSection(part).then(() => toast(part === 'assessment' && redFlagPresent() ? 'Red flag recorded' : `${PART_NAMES[part]} submitted`));
+  submitSection(part).then(() => {
+    const stop = part === 'assessment' && redFlagPresent();
+    toast(stop ? 'Red flag recorded' : `${PART_NAMES[part]} submitted`);
+    const next = PARTS[PARTS.indexOf(part) + 1];
+    if (next && !stop) openPart(next, true);
+  });
 }
 
 /* Two taps clear the form, because browser confirm dialogs are not available everywhere. */
@@ -2015,6 +2080,7 @@ function rerenderAll() {
   renderSessions();
   renderFindingRows();
   applyState();
+  openPart(firstOpenPart(), false);
 }
 function init() {
   renderDatalist();
@@ -2029,6 +2095,8 @@ function init() {
   initJourney();
   initBodyMap();
   $('#sn-add').addEventListener('click', addSession);
+  renderPartBars();
+  $$('.part-bar').forEach(b => b.addEventListener('click', () => openPart(b.dataset.openPart, true)));
   $('#sessions').addEventListener('click', e => { const t = e.target.closest('[data-session-toggle]'); if (t) toggleSession(t.dataset.sessionToggle); });
   document.addEventListener('input', onFieldEvent);
   document.addEventListener('change', onFieldEvent);
@@ -2128,11 +2196,16 @@ state = {
     focus, trainingPhase,
     services: { sportsMassage | recoverySession | assistedStretching | cryotherapy | infraredSauna |
                 compressionTherapy | floatationTherapy | recoveryAssessment: { selected, frequency } },
-    home, option: 'singleSession'|'sessionPackage'|'membership', packageName,
+    home, option: 'singleSession'|'sessionPackage'|'membership'|'packageMembership', packageName,
     nextAppointment, reassessmentDate, recommendedBy,
     after: { toldToExpect, planShared, nextBooked, purchased }
   }
 }
+
+LAYOUT
+  One part is open at a time (openPart(key)). The other parts show as bars (bar-{part}) that open on tap,
+  and the journey steps open them too. After a successful Submit the next part opens.
+  On load the first part that is not complete opens.
 
 REQUIRED FIELDS (inline messages on Submit; nothing else is blocked)
   Registration: client name, client ID, registration date, date of birth, gender.
@@ -2206,7 +2279,7 @@ FIELD IDS AND STATE PATHS
   rp-svc-recoveryAssessment          recoveryPlan.services.recoveryAssessment.selected checkbox (true/false)
   rp-freq-recoveryAssessment         recoveryPlan.services.recoveryAssessment.frequency text
   rp-home                            recoveryPlan.home                                text, multiline
-  rp-option                          recoveryPlan.option                              single choice  values: singleSession, sessionPackage, membership
+  rp-option                          recoveryPlan.option                              single choice  values: singleSession, sessionPackage, membership, packageMembership
   rp-package-name                    recoveryPlan.packageName                         text
   rp-next                            recoveryPlan.nextAppointment                     date (YYYY-MM-DD)
   rp-reassess                        recoveryPlan.reassessmentDate                    date (YYYY-MM-DD)
